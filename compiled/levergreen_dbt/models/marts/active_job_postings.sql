@@ -1,0 +1,1 @@
+select * from "neondb"."core"."all_job_postings" where is_active
