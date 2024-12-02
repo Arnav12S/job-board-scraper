@@ -1,5 +1,5 @@
 
-  create view "neondb"."elementary"."job_run_results__dbt_tmp"
+  create view "postgres"."elementary"."job_run_results__dbt_tmp"
     
     
   as (
@@ -47,7 +47,7 @@ min(cast(run_started_at as timestamp))
 )::timestamp)))
     
  as job_run_execution_time
-  from "neondb"."elementary"."dbt_invocations"
+  from "postgres"."elementary"."dbt_invocations"
   where job_id is not null
   group by job_name, job_id, job_run_id
 )

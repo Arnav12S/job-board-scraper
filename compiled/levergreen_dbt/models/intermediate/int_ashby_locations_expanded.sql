@@ -1,9 +1,9 @@
 with job_locations as (
-    select * from "neondb"."public"."stg_ashby__job_locations"
+    select * from "postgres"."public"."stg_ashby__job_locations"
 ),
 
 jobs_outline as (
-    select * from "neondb"."public"."stg_ashby__jobs_outline"
+    select * from "postgres"."public"."stg_ashby__jobs_outline"
 ),
 
 all_secondary_locations as (

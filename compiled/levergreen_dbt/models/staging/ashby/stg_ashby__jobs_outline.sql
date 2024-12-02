@@ -3,7 +3,7 @@ with convert_unix_to_ts as (
         *,
         to_timestamp(created_at) at time zone 'UTC' as created_at_utc,
         to_timestamp(updated_at) at time zone 'UTC' as updated_at_utc
-    from "neondb"."public"."ashby_jobs_outline"
+    from "postgres"."public"."ashby_jobs_outline"
 ),
 
 convert_ts_to_date as (

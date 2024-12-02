@@ -1,5 +1,5 @@
 
-  create view "neondb"."public"."stg_greenhouse__job_departments__dbt_tmp"
+  create view "postgres"."public"."stg_greenhouse__job_departments__dbt_tmp"
     
     
   as (
@@ -20,7 +20,7 @@
                 updated_at
         ) as earliest_department_id_row
     from
-        "neondb"."public"."greenhouse_job_departments"
+        "postgres"."public"."greenhouse_job_departments"
     where updated_at > 1684600000
 )
 

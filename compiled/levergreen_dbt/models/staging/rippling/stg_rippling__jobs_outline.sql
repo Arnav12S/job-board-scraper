@@ -16,4 +16,4 @@ select
     null as quaternary_department,
     run_hash,
     'rippling' as job_board_provider
-from "neondb"."public"."rippling_jobs_outline"
+from "postgres"."public"."rippling_jobs_outline"

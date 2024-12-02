@@ -1,5 +1,5 @@
 
-  create view "neondb"."elementary"."metrics_anomaly_score__dbt_tmp"
+  create view "postgres"."elementary"."metrics_anomaly_score__dbt_tmp"
     
     
   as (
@@ -7,7 +7,7 @@
 
 with data_monitoring_metrics as (
 
-    select * from "neondb"."elementary"."data_monitoring_metrics"
+    select * from "postgres"."elementary"."data_monitoring_metrics"
 
 ),
 

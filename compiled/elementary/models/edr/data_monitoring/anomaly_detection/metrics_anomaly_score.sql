@@ -2,7 +2,7 @@
 
 with data_monitoring_metrics as (
 
-    select * from "neondb"."elementary"."data_monitoring_metrics"
+    select * from "postgres"."elementary"."data_monitoring_metrics"
 
 ),
 

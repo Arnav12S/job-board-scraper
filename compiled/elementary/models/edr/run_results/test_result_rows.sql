@@ -1,7 +1,7 @@
 -- indexes are not supported in all warehouses, relevant to postgres only
 
 
--- depends_on: "neondb"."elementary"."elementary_test_results"
+-- depends_on: "postgres"."elementary"."elementary_test_results"
 select * from (
             select
             

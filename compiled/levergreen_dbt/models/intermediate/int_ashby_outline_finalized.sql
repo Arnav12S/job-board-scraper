@@ -1,13 +1,13 @@
 with jobs_outline as (
-    select * from "neondb"."public"."stg_ashby__jobs_outline"
+    select * from "postgres"."public"."stg_ashby__jobs_outline"
 ),
 
 job_locations_final as (
-    select * from "neondb"."public"."int_ashby_locations_expanded"
+    select * from "postgres"."public"."int_ashby_locations_expanded"
 ),
 
 job_departments_final as (
-    select * from "neondb"."public"."int_ashby_departments_expanded"
+    select * from "postgres"."public"."int_ashby_departments_expanded"
 )
 
 select distinct

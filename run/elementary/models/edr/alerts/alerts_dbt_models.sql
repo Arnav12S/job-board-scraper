@@ -1,5 +1,5 @@
 
-  create view "neondb"."elementary"."alerts_dbt_models__dbt_tmp"
+  create view "postgres"."elementary"."alerts_dbt_models__dbt_tmp"
     
     
   as (
@@ -30,7 +30,7 @@ with error_models as (
             original_path,
             owner,
             alias 
-    from "neondb"."elementary"."model_run_results"
+    from "postgres"."elementary"."model_run_results"
   
     union all
   
@@ -57,7 +57,7 @@ with error_models as (
             original_path,
             owner,
             alias  
-  from "neondb"."elementary"."snapshot_run_results"
+  from "postgres"."elementary"."snapshot_run_results"
 )
 
 

@@ -1,5 +1,5 @@
 
-  create view "neondb"."public"."stg_ashby__job_departments__dbt_tmp"
+  create view "postgres"."public"."stg_ashby__job_departments__dbt_tmp"
     
     
   as (
@@ -15,7 +15,7 @@
                 updated_at
         ) as earliest_levergreen_id_row
     from
-        "neondb"."public"."ashby_job_departments"
+        "postgres"."public"."ashby_job_departments"
 )
 select
     id,

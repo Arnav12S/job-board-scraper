@@ -1,5 +1,5 @@
 
-  create view "neondb"."elementary"."dbt_artifacts_hashes__dbt_tmp"
+  create view "postgres"."elementary"."dbt_artifacts_hashes__dbt_tmp"
     
     
   as (
@@ -11,49 +11,49 @@
 select
   'dbt_models' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_models"
+from "postgres"."elementary"."dbt_models"
  union all 
 
 select
   'dbt_tests' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_tests"
+from "postgres"."elementary"."dbt_tests"
  union all 
 
 select
   'dbt_sources' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_sources"
+from "postgres"."elementary"."dbt_sources"
  union all 
 
 select
   'dbt_snapshots' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_snapshots"
+from "postgres"."elementary"."dbt_snapshots"
  union all 
 
 select
   'dbt_metrics' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_metrics"
+from "postgres"."elementary"."dbt_metrics"
  union all 
 
 select
   'dbt_exposures' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_exposures"
+from "postgres"."elementary"."dbt_exposures"
  union all 
 
 select
   'dbt_seeds' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_seeds"
+from "postgres"."elementary"."dbt_seeds"
  union all 
 
 select
   'dbt_columns' as artifacts_model,
    metadata_hash
-from "neondb"."elementary"."dbt_columns"
+from "postgres"."elementary"."dbt_columns"
 
 
 order by metadata_hash

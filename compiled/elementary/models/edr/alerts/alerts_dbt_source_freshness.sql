@@ -1,11 +1,11 @@
 
 
 with results as (
-  select * from "neondb"."elementary"."dbt_source_freshness_results"
+  select * from "postgres"."elementary"."dbt_source_freshness_results"
 ),
 
 sources as (
-  select * from "neondb"."elementary"."dbt_sources"
+  select * from "postgres"."elementary"."dbt_sources"
 )
 
 select

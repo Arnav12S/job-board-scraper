@@ -1,5 +1,5 @@
 
-  create view "neondb"."elementary"."anomaly_threshold_sensitivity__dbt_tmp"
+  create view "postgres"."elementary"."anomaly_threshold_sensitivity__dbt_tmp"
     
     
   as (
@@ -7,7 +7,7 @@
 
 with metrics_anomaly_score as (
 
-    select * from "neondb"."elementary"."metrics_anomaly_score"
+    select * from "postgres"."elementary"."metrics_anomaly_score"
 
 ),
 

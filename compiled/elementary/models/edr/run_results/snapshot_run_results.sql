@@ -1,11 +1,11 @@
 
 
 with dbt_run_results as (
-    select * from "neondb"."elementary"."dbt_run_results"
+    select * from "postgres"."elementary"."dbt_run_results"
 ),
 
 dbt_snapshots as (
-    select * from "neondb"."elementary"."dbt_snapshots"
+    select * from "postgres"."elementary"."dbt_snapshots"
 )
 
 SELECT

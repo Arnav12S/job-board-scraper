@@ -1,5 +1,5 @@
 
-  create view "neondb"."public"."stg_lever__jobs_outline__dbt_tmp"
+  create view "postgres"."public"."stg_lever__jobs_outline__dbt_tmp"
     
     
   as (
@@ -8,7 +8,7 @@
         *,
         to_timestamp(created_at) at time zone 'UTC' as created_at_utc,
         to_timestamp(updated_at) at time zone 'UTC' as updated_at_utc
-    from "neondb"."public"."lever_jobs_outline"
+    from "postgres"."public"."lever_jobs_outline"
     
 ),
 

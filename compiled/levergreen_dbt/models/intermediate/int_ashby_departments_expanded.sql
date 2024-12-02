@@ -4,7 +4,7 @@ with job_departments as (
         department_name,
         parent_department_id, 
         row_number() over(partition by department_id order by updated_at_utc desc) as rn
-    from "neondb"."public"."stg_ashby__job_departments"
+    from "postgres"."public"."stg_ashby__job_departments"
 ),
 
 
@@ -13,7 +13,7 @@ job_departments_dedup as (
 ),
 
 jobs_outline as (
-    select id, opening_id, department_id from "neondb"."public"."stg_ashby__jobs_outline"
+    select id, opening_id, department_id from "postgres"."public"."stg_ashby__jobs_outline"
 ),
 
 job_departments_joined as (

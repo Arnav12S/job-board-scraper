@@ -2,7 +2,7 @@
   
     
 
-  create  table "neondb"."elementary"."metadata__dbt_tmp"
+  create  table "postgres"."elementary"."metadata__dbt_tmp"
   
   
     as

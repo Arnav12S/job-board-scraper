@@ -1,12 +1,12 @@
 
-  create view "neondb"."elementary"."alerts_dbt_tests__dbt_tmp"
+  create view "postgres"."elementary"."alerts_dbt_tests__dbt_tmp"
     
     
   as (
     
 
 with elementary_test_results as (
-    select * from "neondb"."elementary"."elementary_test_results"
+    select * from "postgres"."elementary"."elementary_test_results"
 ),
 
 alerts_dbt_tests as (

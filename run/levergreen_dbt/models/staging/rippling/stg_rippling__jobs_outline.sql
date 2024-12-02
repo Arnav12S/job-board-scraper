@@ -1,5 +1,5 @@
 
-  create view "neondb"."public"."stg_rippling__jobs_outline__dbt_tmp"
+  create view "postgres"."public"."stg_rippling__jobs_outline__dbt_tmp"
     
     
   as (
@@ -21,5 +21,5 @@
     null as quaternary_department,
     run_hash,
     'rippling' as job_board_provider
-from "neondb"."public"."rippling_jobs_outline"
+from "postgres"."public"."rippling_jobs_outline"
   );

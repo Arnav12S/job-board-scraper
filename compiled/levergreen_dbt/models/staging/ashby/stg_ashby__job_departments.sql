@@ -10,7 +10,7 @@ with ashby_departments_by_levergreen_id as (
                 updated_at
         ) as earliest_levergreen_id_row
     from
-        "neondb"."public"."ashby_job_departments"
+        "postgres"."public"."ashby_job_departments"
 )
 select
     id,

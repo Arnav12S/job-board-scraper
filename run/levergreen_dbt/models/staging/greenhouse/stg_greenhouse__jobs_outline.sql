@@ -1,5 +1,5 @@
 
-  create view "neondb"."public"."stg_greenhouse__jobs_outline__dbt_tmp"
+  create view "postgres"."public"."stg_greenhouse__jobs_outline__dbt_tmp"
     
     
   as (
@@ -10,7 +10,7 @@
             or split_part(split_part(source,'/',3),'.',1) = 'job-boards' as is_full_link, 
         to_timestamp(created_at) at time zone 'UTC' as created_at_utc,
         to_timestamp(updated_at) at time zone 'UTC' as updated_at_utc
-    from "neondb"."public"."greenhouse_jobs_outline"
+    from "postgres"."public"."greenhouse_jobs_outline"
     
 ),
 

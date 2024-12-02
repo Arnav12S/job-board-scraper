@@ -3,7 +3,7 @@ with convert_unix_to_ts as (
         *,
         to_timestamp(created_at) at time zone 'UTC' as created_at_utc,
         to_timestamp(updated_at) at time zone 'UTC' as updated_at_utc
-    from "neondb"."public"."lever_jobs_outline"
+    from "postgres"."public"."lever_jobs_outline"
     
 ),
 

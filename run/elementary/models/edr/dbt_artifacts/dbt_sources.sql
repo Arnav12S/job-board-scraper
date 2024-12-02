@@ -1,19 +1,19 @@
 
       
         
-            delete from "neondb"."elementary"."dbt_sources"
+            delete from "postgres"."elementary"."dbt_sources"
             where (
                 unique_id) in (
                 select (unique_id)
-                from "dbt_sources__dbt_tmp113610758662"
+                from "dbt_sources__dbt_tmp121316166257"
             );
 
         
     
 
-    insert into "neondb"."elementary"."dbt_sources" ("unique_id", "database_name", "schema_name", "source_name", "name", "identifier", "loaded_at_field", "freshness_warn_after", "freshness_error_after", "freshness_filter", "freshness_description", "relation_name", "tags", "meta", "owner", "package_name", "original_path", "path", "source_description", "description", "generated_at", "metadata_hash")
+    insert into "postgres"."elementary"."dbt_sources" ("unique_id", "database_name", "schema_name", "source_name", "name", "identifier", "loaded_at_field", "freshness_warn_after", "freshness_error_after", "freshness_filter", "freshness_description", "relation_name", "tags", "meta", "owner", "package_name", "original_path", "path", "source_description", "description", "generated_at", "metadata_hash")
     (
         select "unique_id", "database_name", "schema_name", "source_name", "name", "identifier", "loaded_at_field", "freshness_warn_after", "freshness_error_after", "freshness_filter", "freshness_description", "relation_name", "tags", "meta", "owner", "package_name", "original_path", "path", "source_description", "description", "generated_at", "metadata_hash"
-        from "dbt_sources__dbt_tmp113610758662"
+        from "dbt_sources__dbt_tmp121316166257"
     )
   

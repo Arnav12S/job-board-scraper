@@ -1,16 +1,16 @@
 
-  create view "neondb"."elementary"."seed_run_results__dbt_tmp"
+  create view "postgres"."elementary"."seed_run_results__dbt_tmp"
     
     
   as (
     
 
 with dbt_run_results as (
-    select * from "neondb"."elementary"."dbt_run_results"
+    select * from "postgres"."elementary"."dbt_run_results"
 ),
 
 dbt_seeds as (
-    select * from "neondb"."elementary"."dbt_seeds"
+    select * from "postgres"."elementary"."dbt_seeds"
 )
 
 SELECT

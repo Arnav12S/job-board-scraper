@@ -2,7 +2,7 @@
 
 
 with elementary_test_results as (
-    select * from "neondb"."elementary"."elementary_test_results"
+    select * from "postgres"."elementary"."elementary_test_results"
 ),
 
 alerts_schema_changes as (

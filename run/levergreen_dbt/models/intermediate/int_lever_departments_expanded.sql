@@ -2,14 +2,14 @@
   
     
 
-  create  table "neondb"."public"."int_lever_departments_expanded__dbt_tmp"
+  create  table "postgres"."public"."int_lever_departments_expanded__dbt_tmp"
   
   
     as
   
   (
     with lever_jobs_outline as (
-    select * from "neondb"."public"."stg_lever__jobs_outline"
+    select * from "postgres"."public"."stg_lever__jobs_outline"
 ),
 
 jobs_outline_unnested as (
