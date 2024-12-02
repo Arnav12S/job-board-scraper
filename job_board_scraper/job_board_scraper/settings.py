@@ -118,3 +118,7 @@ FEEDS = {
 
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 LOGSTATS_INTERVAL = 0
+
+# Add Supabase credentials
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")

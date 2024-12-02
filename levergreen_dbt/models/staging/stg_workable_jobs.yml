@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_workable_jobs
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: job_title
+        tests:
+          - not_null
+      - name: job_url
+        tests:
+          - unique
+          - not_null 

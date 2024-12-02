@@ -1,6 +1,7 @@
 import sys
 import scrapy
 import os
+from dotenv import load_dotenv
 import logging
 import psycopg2
 import time
@@ -19,10 +20,13 @@ from job_board_scraper.utils.postgres_wrapper import PostgresWrapper
 from job_board_scraper.utils import general as util
 from job_board_scraper.utils.scraper_util import get_url_chunks
 from scrapy.utils.project import get_project_settings
+from supabase import create_client
 #import get_ashby_jobs
 
 logger = logging.getLogger("logger")
 run_hash = util.hash_ids.encode(int(time.time()))
+
+load_dotenv()
 
 
 def run_spider(single_url_chunk, chunk_number):
@@ -69,17 +73,18 @@ def run_spider(single_url_chunk, chunk_number):
 if __name__ == "__main__":
     chunk_size = int(os.getenv("CHUNK_SIZE", 200))
 
-    connection = psycopg2.connect(
-        host=os.getenv("PG_HOST"),
-        user=os.getenv("PG_USER"),
-        password=os.getenv("PG_PASSWORD"),
-        dbname=os.getenv("PG_DATABASE"),
+    supabase = create_client(
+        os.getenv("SUPABASE_URL"),
+        os.getenv("SUPABASE_KEY")
     )
-    cursor = connection.cursor()
-    cursor.execute(os.getenv("PAGES_TO_SCRAPE_QUERY"))
-    careers_page_urls = cursor.fetchall()
-    cursor.close()
-    connection.close()
+    
+    # Get careers page URLs using Supabase
+    result = supabase.rpc(
+        'get_pages_to_scrape',
+        {'query': os.getenv("PAGES_TO_SCRAPE_QUERY")}
+    ).execute()
+    
+    careers_page_urls = [(row['url'],) for row in result.data]
     url_chunks = get_url_chunks(careers_page_urls, chunk_size)
 
     num_processes = len(url_chunks)

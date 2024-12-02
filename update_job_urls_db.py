@@ -184,8 +184,8 @@ def clean_url(url, ats):
         if netloc.startswith('jobs.jobvite.com'):
             company = path.strip('/').split('/')[0]
             if company:
-                # Remove query parameters
-                return f"https://jobs.jobvite.com/{company}"
+                # Add /jobs at the end of all Jobvite URLs
+                return f"https://jobs.jobvite.com/{company}/search"
         return None
     
     elif ats == 'smartrecruiters':
@@ -223,7 +223,7 @@ df = df.dropna(subset=['company_url'])
 df = df.drop_duplicates(subset='company_url')
 
 # Define ATS types that are enabled
-enabled_ats = ['greenhouse', 'lever', 'ashbyhq']
+enabled_ats = ['greenhouse', 'lever', 'ashbyhq', 'workable', 'jobvite', 'smartrecruiters', 'recruitee', 'teamtailor']
 
 # Set is_enabled to True for enabled ATS and False otherwise
 df['is_enabled'] = df['ats'].str.lower().isin(enabled_ats)

@@ -7,16 +7,14 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from job_board_scraper.utils import pipline_util
-
 from io import BytesIO
 from dotenv import load_dotenv
 from botocore.exceptions import ClientError
+from supabase import create_client, Client
 
 import os
 import boto3
 import logging
-import psycopg2
-from psycopg2 import pool
 
 logger = logging.getLogger("logger")
 
@@ -27,25 +25,14 @@ class JobScraperPipelinePostgres:
         self.logger.info("Initializing JobScraperPipelinePostgres")
         
         # Log environment variables (excluding sensitive info)
-        self.hostname = os.getenv("PG_HOST")
-        self.username = os.getenv("PG_USER")
-        self.database = os.getenv("PG_DATABASE")
-        self.port = os.getenv("PG_PORT", "5432")
-        
-        self.logger.info(f"Database config: host={self.hostname}, db={self.database}, port={self.port}")
+        self.supabase_url = os.getenv("SUPABASE_URL")
+        self.supabase_key = os.getenv("SUPABASE_KEY")
         
         try:
-            self.connection_pool = pool.SimpleConnectionPool(
-                1, 20,
-                host=self.hostname,
-                user=self.username,
-                password=os.getenv("PG_PASSWORD"),
-                dbname=self.database,
-                port=self.port
-            )
-            self.logger.info("Successfully created database connection pool")
+            self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
+            self.logger.info("Successfully connected to Supabase")
         except Exception as e:
-            self.logger.error(f"Failed to create connection pool: {e}")
+            self.logger.error(f"Failed to connect to Supabase: {e}")
             raise
 
     def open_spider(self, spider):
@@ -60,19 +47,12 @@ class JobScraperPipelinePostgres:
         )
         
         try:
-            conn = self.connection_pool.getconn()
-            with conn.cursor() as cur:
-                self.logger.info(f"Creating table with statement: {create_table_statement}")
-                cur.execute(create_table_statement)
-                conn.commit()
-                self.logger.info(f"Successfully created/verified table {self.table_name}")
+            # Execute raw SQL using Supabase
+            self.supabase.table(self.table_name).select("*").limit(1).execute()
+            self.logger.info(f"Table {self.table_name} exists")
         except Exception as e:
-            self.logger.error(f"Error creating table: {e}")
-            if conn:
-                conn.rollback()
-        finally:
-            if conn:
-                self.connection_pool.putconn(conn)
+            self.logger.info(f"Creating table {self.table_name}")
+            self.supabase.rpc('exec_sql', {'query': create_table_statement}).execute()
 
     def process_item(self, item, spider):
         self.logger.info(f"Processing item in pipeline for spider {spider.name}")
@@ -81,39 +61,30 @@ class JobScraperPipelinePostgres:
             return item
         
         try:
-            conn = self.connection_pool.getconn()
-            with conn.cursor() as cur:
-                insert_item_statement, table_values_list = pipline_util.create_insert_item(
-                    self.table_name, item
-                )
-                self.logger.info(f"Attempting to execute SQL: {insert_item_statement}")
-                self.logger.info(f"With values: {table_values_list}")
-                
-                if not table_values_list:
-                    self.logger.error("No values to insert")
-                    return item
-                    
-                cur.execute(insert_item_statement, tuple(table_values_list))
-                conn.commit()
-                self.logger.info(f"Successfully inserted item into {self.table_name}")
-                
+            insert_item_statement, table_values = pipline_util.create_insert_item(
+                self.table_name, item
+            )
+            
+            if not table_values:
+                self.logger.error("No values to insert")
+                return item
+            
+            # Convert list to dict for Supabase insert
+            columns = [col.split('$')[1].strip('}') for col in insert_item_statement.split('(')[1].split(')')[0].split(',')]
+            data_dict = dict(zip(columns, table_values))
+            
+            # Insert using Supabase
+            self.supabase.table(self.table_name).insert(data_dict).execute()
+            self.logger.info(f"Successfully inserted item into {self.table_name}")
+            
         except Exception as e:
             self.logger.error(f"Failed to insert item: {str(e)}")
             self.logger.error(f"Item contents: {dict(item)}")
-            if conn:
-                conn.rollback()
-        finally:
-            if conn:
-                self.connection_pool.putconn(conn)
         
         return item
 
     def close_spider(self, spider):
-        try:
-            self.connection_pool.closeall()
-            self.logger.info("PostgreSQL connection pool closed.")
-        except Exception as e:
-            self.logger.error(f"Error closing connection pool: {e}")
+        self.logger.info("Spider closed")
 
     def export_html(self, item):
         try:

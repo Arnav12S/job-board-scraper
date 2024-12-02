@@ -55,3 +55,13 @@ class GreenhouseJobDepartmentsItem(LevergreenScrapyItem):
     department_category = scrapy.Field(
         input_processor=MapCompose(get_last_word), output_processor=TakeFirst()
     )
+
+
+class TeamTailorJobsOutlineItem(LevergreenScrapyItem):
+    # define the fields for your item here like:
+    department_names = scrapy.Field(output_processor=TakeFirst())
+    workplace_type = scrapy.Field(output_processor=TakeFirst())
+    opening_title = scrapy.Field(output_processor=TakeFirst())
+    opening_link = scrapy.Field(output_processor=TakeFirst())
+    location = scrapy.Field(output_processor=TakeFirst())
+    company_name = scrapy.Field(output_processor=TakeFirst())
