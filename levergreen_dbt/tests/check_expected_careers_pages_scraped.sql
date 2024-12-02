@@ -24,3 +24,23 @@ actual_sources as (
 select * from expected_sources
 full outer join actual_sources on expected_sources.expected_source = actual_sources.actual_source
 where expected_sources.expected_source is null or actual_sources.actual_source is null
+
+WITH expected_sources AS (
+    SELECT DISTINCT company_url as expected_source
+    FROM job_board_urls
+    WHERE is_enabled
+),
+
+actual_sources AS (
+    SELECT DISTINCT source as actual_source 
+    FROM active_job_postings
+)
+
+UPDATE job_board_urls
+SET is_enabled = false
+WHERE company_url IN (
+    SELECT expected_source 
+    FROM expected_sources
+    LEFT JOIN actual_sources ON expected_sources.expected_source = actual_sources.actual_source
+    WHERE actual_sources.actual_source IS NULL
+);
