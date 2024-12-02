@@ -12,6 +12,20 @@ from typing import Optional
 from datetime import datetime
 from job_board_scraper.utils import general as util
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def main():
+    try:
+        logger.info("Starting Ashby jobs script")
+        # Your existing code
+        logger.info("Ashby jobs script completed successfully")
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        exit(1)
+
+if __name__ == "__main__":
+    main()
 
 def determine_row_id(spider_id, url_id, row_id, created_at, k=0):
     return util.hash_ids.encode(spider_id, url_id, row_id, created_at, k)
@@ -95,11 +109,6 @@ class Team(Struct):
     name: str
     parentTeamId: Optional[str]
 
-
-logger = logging.getLogger("ashby_logger")
-logger.setLevel(logging.INFO)
-console = logging.StreamHandler()
-logger.addHandler(console)
 
 ashby_teams_id = 3
 ashby_postings_id = 4
