@@ -19,7 +19,7 @@ sources:
           tests:
             - unique
             - not_null
-        - name: url
+        - name: company_url
           description: careers page to be scraped
           tests:
             - unique
