@@ -24,7 +24,11 @@ jobs:
       - name: Run Scrapy Script
         run: |
           cd job_board_scraper
-          python run_job_scraper.py > run_job_scraper.log 2>&1
+          python run_job_scraper.py  > run_job_scraper.log 2>&1
+
+      - name: Run Ashby Script
+        run: |
+          cd job_board_scraper
           python get_ashby_jobs.py > get_ashby_jobs.log 2>&1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
