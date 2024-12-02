@@ -1,7 +1,6 @@
 {{ 
     config(
         severity = 'error',
-        error_if = '>=10',
         warn_if = '>0'
     ) 
 }}
