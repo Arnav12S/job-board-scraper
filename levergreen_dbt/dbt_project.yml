@@ -40,7 +40,7 @@ models:
     staging:
       +materialized: view
     intermediate:
-      +materialized: table
+      +materialized: tablep
     marts:
       +materialized: table
       +schema: core
