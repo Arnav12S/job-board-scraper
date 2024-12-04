@@ -1,7 +1,5 @@
 from hashids import Hashids
 import os
-import psycopg2
-import logging
 from utils.rippling.parsing_helper import (
     call_rippling_job_board_api,
     create_rippling_dataframes,
@@ -9,6 +7,8 @@ from utils.rippling.parsing_helper import (
 from json import JSONDecodeError
 from urllib.error import HTTPError
 from dotenv import load_dotenv
+from supabase import create_client
+import logging
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -19,26 +19,18 @@ hash_ids = Hashids(
 )
 
 
-def setup_postgres_connection(job_board_provider):
-    conn = psycopg2.connect(
-        host=os.getenv("PG_HOST"),
-        user=os.getenv("PG_USER"),
-        password=os.getenv("PG_PASSWORD"),
-        dbname=os.getenv("PG_DATABASE"),
-        port=os.getenv("PG_PORT"),
+def setup_supabase_connection(job_board_provider):
+    supabase = create_client(
+        os.getenv("SUPABASE_URL"),
+        os.getenv("SUPABASE_KEY")
     )
 
-    cursor = conn.cursor()
-    cursor.execute(
-        os.getenv("GET_BOARD_TOKENS_BASE_QUERY"), {"provider": job_board_provider}
-    )
-    conn.commit()
+    result = supabase.rpc(
+        os.getenv("GET_BOARD_TOKENS_BASE_QUERY"),
+        {'provider': job_board_provider}
+    ).execute()
 
-    board_tokens = [row[0] for row in cursor.fetchall()]
-
-    cursor.close()
-    conn.close()
-
+    board_tokens = [row['token'] for row in result.data]
     return board_tokens
 
 

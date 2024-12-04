@@ -10,8 +10,8 @@ import re
 # Enable logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Load environment variables from a specific path
-dotenv_path = '/Users/arnav/Downloads/GitHub/job-board-scraper-arnav/.env'  # Replace with the actual path
+# Load environment variables from the current directory
+dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
 load_dotenv(dotenv_path, verbose=True)
 
 # Database connection parameters
@@ -50,7 +50,8 @@ engine = create_engine(db_url)
 print("Database engine created.")
 
 # Read CSV file
-df = pd.read_csv('/Users/arnav/Downloads/GitHub/Linkedin-Jobs/company_ats_data.csv')
+csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'company_ats_data.csv')
+df = pd.read_csv(csv_path)
 print("CSV file read successfully.")
 
 # Convert all column names to lowercase

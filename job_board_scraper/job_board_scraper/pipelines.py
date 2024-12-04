@@ -11,6 +11,7 @@ from io import BytesIO
 from dotenv import load_dotenv
 from botocore.exceptions import ClientError
 from supabase import create_client, Client
+from postgrest.exceptions import APIError
 
 import os
 import boto3
@@ -24,7 +25,8 @@ class JobScraperPipelinePostgres:
         self.logger = logging.getLogger(__name__)
         self.logger.info("Initializing JobScraperPipelinePostgres")
         
-        # Log environment variables (excluding sensitive info)
+        # Load environment variables
+        load_dotenv()
         self.supabase_url = os.getenv("SUPABASE_URL")
         self.supabase_key = os.getenv("SUPABASE_KEY")
         
@@ -40,22 +42,23 @@ class JobScraperPipelinePostgres:
         self.table_name = spider.name
         self.logger.info(f"Using table name: {self.table_name}")
         
-        # Create table if it doesn't exist
-        initial_table_schema = pipline_util.set_initial_table_schema(self.table_name)
-        create_table_statement = pipline_util.create_table_schema(
-            self.table_name, initial_table_schema
-        )
-        
         try:
-            # Execute raw SQL using Supabase
+            # Try to select from table to check if it exists
             self.supabase.table(self.table_name).select("*").limit(1).execute()
-            self.logger.info(f"Table {self.table_name} exists")
-        except Exception as e:
-            self.logger.info(f"Creating table {self.table_name}")
-            self.supabase.rpc('exec_sql', {'query': create_table_statement}).execute()
+        except APIError as e:
+            if 'relation "public.' in str(e):
+                self.logger.info(f"Creating table {self.table_name}")
+                try:
+                    # Create table using the schema from utils
+                    table_schema = pipline_util.finalize_table_schema(self.table_name)
+                    self.supabase.rpc('exec_sql', {'query': table_schema}).execute()
+                    self.logger.info(f"Successfully created table {self.table_name}")
+                except Exception as create_error:
+                    self.logger.error(f"Failed to create table {self.table_name}: {create_error}")
+                    raise
 
     def process_item(self, item, spider):
-        self.logger.info(f"Processing item in pipeline for spider {spider.name}")
+        self.logger.info(f"Processing item in pipeline: {item}")
         if not item:
             self.logger.error("Received empty item")
             return item
@@ -69,14 +72,18 @@ class JobScraperPipelinePostgres:
                 self.logger.error("No values to insert")
                 return item
             
-            # Convert list to dict for Supabase insert
-            columns = [col.split('$')[1].strip('}') for col in insert_item_statement.split('(')[1].split(')')[0].split(',')]
+            # Extract column names by splitting the insert statement
+            columns_part = insert_item_statement.split('(')[1].split(')')[0]
+            columns = [col.strip() for col in columns_part.split(',')]
             data_dict = dict(zip(columns, table_values))
             
             # Insert using Supabase
-            self.supabase.table(self.table_name).insert(data_dict).execute()
-            self.logger.info(f"Successfully inserted item into {self.table_name}")
-            
+            response = self.supabase.table(self.table_name).insert(data_dict).execute()
+            if response.status_code in [200, 201]:
+                self.logger.info(f"Successfully inserted item into {self.table_name}")
+            else:
+                self.logger.error(f"Failed to insert item into {self.table_name}: {response}")
+        
         except Exception as e:
             self.logger.error(f"Failed to insert item: {str(e)}")
             self.logger.error(f"Item contents: {dict(item)}")
