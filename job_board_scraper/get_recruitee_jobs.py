@@ -1,18 +1,21 @@
-import aiohttp
 import asyncio
+import aiohttp
+import logging
+import os
+import time
+from supabase import create_client
+from job_board_scraper.utils import general as util
 from bs4 import BeautifulSoup
 import json
 import uuid
-import os
-import logging
-import time
-from supabase import create_client
-from dotenv import load_dotenv
-from job_board_scraper.utils import general as util
 
-load_dotenv()
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def fetch_all_recruitee_urls(supabase):
+    response = supabase.table("job_board_urls").select("company_url").eq("ats", "recruitee").eq("is_enabled", True).execute()
+    return [record['company_url'] for record in response.data]
 
 async def fetch_url(session, url, headers):
     async with session.get(url, headers=headers) as response:
@@ -111,23 +114,12 @@ async def process_url(session, url_data, headers, supabase, run_hash, i):
     except Exception as e:
         logger.error(f"Error processing {company_name}: {str(e)}")
 
-async def run_spider():
+async def main(careers_page_url: str, run_hash: str, url_id: int):
     try:
-        # Initialize Supabase client
         supabase = create_client(
             os.getenv("SUPABASE_URL"),
             os.getenv("SUPABASE_KEY")
         )
-        
-        # Test connection
-        test_response = supabase.table("recruitee_jobs_outline").select("*", count='exact').execute()
-        logger.info(f"Connected to Supabase - current row count: {test_response.count}")
-        
-        # Get careers page URLs using pagination
-        careers_page_urls = get_recruitee_urls(supabase)
-        logger.info(f"Fetched {len(careers_page_urls)} career page URLs from Supabase")
-
-        run_hash = str(int(time.time()))
         
         headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -137,53 +129,22 @@ async def run_spider():
         }
 
         async with aiohttp.ClientSession() as session:
-            tasks = [
-                process_url(session, url_data, headers, supabase, run_hash, i)
-                for i, url_data in enumerate(careers_page_urls)
-            ]
-            await asyncio.gather(*tasks)
-
-        try:
-            final_count = supabase.table("recruitee_jobs_outline").select("*", count='exact').execute()
-            logger.info(f"Final row count in Supabase: {final_count.count}")
-        except Exception as e:
-            logger.error(f"Error fetching final row count: {str(e)}")
+            url_data = {'url': careers_page_url}
+            await process_url(session, url_data, headers, supabase, run_hash, url_id)
 
     except Exception as e:
-        logger.error(f"Database connection error: {str(e)}")
-        raise
-
-def main():
-    try:
-        logger.info("Starting Recruitee jobs script")
-        asyncio.run(run_spider())
-        logger.info("Recruitee jobs script completed successfully")
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        exit(1)
-
-def get_recruitee_urls(supabase_client) -> list[dict]:
-    all_urls = []
-    offset = 0
-    limit = 1000
-
-    while True:
-        response = supabase_client.table('job_board_urls') \
-            .select('company_url') \
-            .eq('ats', 'recruitee') \
-            .eq('is_enabled', True) \
-            .range(offset, offset + limit - 1) \
-            .execute()
-
-        batch = response.data
-        if not batch:
-            break
-
-        urls = [{'url': row['company_url']} for row in batch]
-        all_urls.extend(urls)
-        offset += limit
-
-    return all_urls
+        logger.error(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
-    main()
+    try:
+        supabase = create_client(
+            os.getenv("SUPABASE_URL"),
+            os.getenv("SUPABASE_KEY")
+        )
+        careers_page_urls = fetch_all_recruitee_urls(supabase)
+        # Generate run_hash only when running standalone
+        run_hash = util.hash_ids.encode(int(time.time()))
+        for url_id, careers_page_url in enumerate(careers_page_urls):
+            asyncio.run(main(careers_page_url, run_hash, url_id))
+    except Exception as e:
+        logger.error(f"Script failed: {e}")

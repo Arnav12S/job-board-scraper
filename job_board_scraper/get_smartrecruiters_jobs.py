@@ -152,72 +152,53 @@ async def process_company(
         except Exception as e:
             logger.error(f"Error processing {company_name}: {str(e)}")
 
-async def main():
+async def main(careers_page_url: str, run_hash: str, url_id: int):
     try:
-        # Initialize Supabase client
         supabase = create_client(
             os.getenv("SUPABASE_URL"),
             os.getenv("SUPABASE_KEY")
         )
         
-        # Test connection
-        test_response = supabase.table("smartrecruiters_jobs_outline").select("*", count='exact').execute()
-        logger.info(f"Connected to Supabase - current row count: {test_response.count}")
+        headers = {
+            'Pragma': 'no-cache',
+            'Accept': '*/*',
+            'Sec-Fetch-Site': 'same-origin',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cache-Control': 'no-cache',
+            'Sec-Fetch-Mode': 'cors',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15',
+            'Referer': careers_page_url,
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'empty',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Priority': 'u=3, i'
+        }
 
-        # Get careers page URLs
-        careers_page_urls = fetch_all_smartrecruiters_urls(supabase)
-        logger.info(f"Found {len(careers_page_urls)} SmartRecruiters URLs to scrape")
-
-        run_hash = str(int(time.time()))
-        
-        semaphore = asyncio.Semaphore(CONCURRENT_REQUESTS)
-
-        # Create cookie jar and session without headers
-        cookie_jar = aiohttp.CookieJar(unsafe=True)
-        async with aiohttp.ClientSession(cookie_jar=cookie_jar) as session:
-            tasks = [
-                process_company(
-                    session=session,
-                    semaphore=semaphore,
-                    url=url,
-                    supabase=supabase,
-                    run_hash=run_hash,
-                    headers={
-                        'Pragma': 'no-cache',
-                        'Accept': '*/*',
-                        'Sec-Fetch-Site': 'same-origin',
-                        'Accept-Language': 'en-US,en;q=0.9',
-                        'Cache-Control': 'no-cache',
-                        'Sec-Fetch-Mode': 'cors',
-                        'Accept-Encoding': 'gzip, deflate, br',
-                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15',
-                        'Referer': url,
-                        'Connection': 'keep-alive',
-                        'Sec-Fetch-Dest': 'empty',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Priority': 'u=3, i'
-                    }
-                )
-                for url in careers_page_urls
-            ]
-            await asyncio.gather(*tasks, return_exceptions=True)
-
-        # Log final count
-        final_count = supabase.table("smartrecruiters_jobs_outline").select("*", count='exact').execute()
-        logger.info(f"Final row count in Supabase: {final_count.count}")
+        semaphore = asyncio.Semaphore(10)
+        async with aiohttp.ClientSession() as session:
+            await process_company(
+                session=session,
+                semaphore=semaphore,
+                url=careers_page_url,
+                supabase=supabase,
+                run_hash=run_hash,
+                headers=headers
+            )
 
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
-        raise
-
-def run():
-    try:
-        logger.info("Starting SmartRecruiters jobs script")
-        asyncio.run(main())
-        logger.info("SmartRecruiters jobs script completed successfully")
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        exit(1)
 
 if __name__ == "__main__":
-    run() 
+    try:
+        supabase = create_client(
+            os.getenv("SUPABASE_URL"),
+            os.getenv("SUPABASE_KEY")
+        )
+        careers_page_urls = fetch_all_smartrecruiters_urls(supabase)
+        # Generate run_hash only when running standalone
+        run_hash = util.hash_ids.encode(int(time.time()))
+        for url_id, careers_page_url in enumerate(careers_page_urls):
+            asyncio.run(main(careers_page_url, run_hash, url_id))
+    except Exception as e:
+        logger.error(f"Script failed: {e}") 

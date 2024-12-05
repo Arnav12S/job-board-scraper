@@ -107,11 +107,11 @@ def fetch_all_jobvite_urls(supabase):
 
     return all_urls
 
-async def main_with_params(careers_page_urls: List[str], run_hash: str):
+async def main_with_params(careers_page_url: str, run_hash: str, url_id: int):
     try:
         supabase = create_client(
-            os.environ.get("SUPABASE_URL"),
-            os.environ.get("SUPABASE_KEY")
+            os.getenv("SUPABASE_URL"),
+            os.getenv("SUPABASE_KEY")
         )
         
         current_time = int(time.time())
@@ -120,18 +120,15 @@ async def main_with_params(careers_page_urls: List[str], run_hash: str):
         }
 
         async with aiohttp.ClientSession() as session:
-            tasks = [
-                process_company(session, i, url, supabase, run_hash, current_time, headers)
-                for i, url in enumerate(careers_page_urls)
-            ]
-            await asyncio.gather(*tasks)
+            company_name = careers_page_url.split('//')[-1].split('.')[0]
+            await process_company(session, 0, careers_page_url, supabase, run_hash, current_time, headers)
 
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
 
 def main_with_hash(careers_page_url: str, run_hash: str, url_id: int):
     try:
-        asyncio.run(main_with_params([careers_page_url], run_hash))
+        asyncio.run(main_with_params(careers_page_url, run_hash, url_id))
     except Exception as e:
         logger.error(f"An unexpected error occurred processing {careers_page_url}: {e}")
 
@@ -144,6 +141,7 @@ if __name__ == "__main__":
         careers_page_urls = fetch_all_jobvite_urls(supabase)
         # Generate run_hash only when running standalone
         run_hash = util.hash_ids.encode(int(time.time()))
-        asyncio.run(main_with_params(careers_page_urls, run_hash))
+        for url_id, careers_page_url in enumerate(careers_page_urls):
+            asyncio.run(main_with_params(careers_page_url, run_hash, url_id))
     except Exception as e:
         logger.error(f"Script failed: {e}")

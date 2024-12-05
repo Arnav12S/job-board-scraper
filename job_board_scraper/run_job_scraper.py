@@ -20,7 +20,7 @@ from job_board_scraper.utils import general as util
 from job_board_scraper.utils.scraper_util import get_url_chunks
 from scrapy.utils.project import get_project_settings
 import asyncio
-from get_ashby_jobs import main_with_hash as run_ashby_scraper
+from get_ashby_jobs import main as run_ashby_scraper
 from get_workable_jobs import main as run_workable_scraper
 from get_recruitee_jobs import main as run_recruitee_scraper
 from get_teamtailor_jobs import main as run_teamtailor_scraper

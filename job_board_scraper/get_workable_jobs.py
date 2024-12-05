@@ -2,9 +2,11 @@ import asyncio
 import aiohttp
 from supabase import create_client, Client
 import os
-from fast_langdetect import detect_language
+from ftlangdetect import detect
+import time
 import logging
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
+from job_board_scraper.utils import general as util
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -99,7 +101,7 @@ async def insert_jobs_to_supabase(jobs):
         # Detect language of the job description
         try:
             description = job.get("description", "")
-            language_iso = detect_language(description) if description else "unknown"
+            language_iso = detect(description) if description else "unknown"
         except Exception as e:
             logging.error(f"Language detection failed: {e}")
             language_iso = "unknown"
@@ -155,12 +157,35 @@ async def insert_jobs_to_supabase(jobs):
 
     logging.info("All records have been inserted into Supabase.")
 
-async def main():
-    jobs = await fetch_jobs()
-    if jobs:
-        await insert_jobs_to_supabase(jobs)
-    else:
-        logging.info("No jobs to insert.")
+async def main(careers_page_url: str, run_hash: str, url_id: int):
+    try:
+        # Extract company name from URL
+        company_name = careers_page_url.split('//')[-1].split('.')[0]
+        logging.info(f"Processing {company_name} at {careers_page_url}")
+        
+        jobs = await fetch_jobs()
+        if jobs:
+            await insert_jobs_to_supabase(jobs)
+        else:
+            logging.info("No jobs to insert.")
+    except Exception as e:
+        logging.error(f"Error in main: {str(e)}")
+        raise
+
+def fetch_all_workable_urls(supabase):
+    response = supabase.table("job_board_urls").select("company_url").eq("ats", "workable").eq("is_enabled", True).execute()
+    return [record['company_url'] for record in response.data]
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        supabase = create_client(
+            os.getenv("SUPABASE_URL"),
+            os.getenv("SUPABASE_KEY")
+        )
+        careers_page_urls = fetch_all_workable_urls(supabase)
+        # Generate run_hash only when running standalone
+        run_hash = util.hash_ids.encode(int(time.time()))
+        for url_id, careers_page_url in enumerate(careers_page_urls):
+            asyncio.run(main(careers_page_url, run_hash, url_id))
+    except Exception as e:
+        logging.error(f"Script failed: {e}")

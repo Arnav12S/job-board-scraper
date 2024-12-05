@@ -224,32 +224,35 @@ async def fetch_company_data(
     except Exception as e:
         logger.error(f"Failed to process {company_name}: {e}")
 
-async def main():
-    careers_page_urls = await fetch_ashby_urls(connection_string)
-    batch_processor = BatchProcessor(connection_string)
-    run_hash = util.hash_ids.encode(int(time.time()))
-    
-    with open(QUERY_PATH, 'r') as f:
-        query = f.read()
+async def main(careers_page_url: str, run_hash: str, url_id: int):
+    try:
+        # Initialize the batch processor
+        batch_processor = BatchProcessor(connection_string)
 
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for i, (ashby_url,) in enumerate(careers_page_urls):
-            company_name = ashby_url.split("/")[-1].replace("%20", " ")
-            task = fetch_company_data(
+        # Read the GraphQL query from a file
+        with open(QUERY_PATH, 'r') as f:
+            query = f.read()
+
+        # Extract the company name from the URL
+        company_name = careers_page_url.split("/")[-1].replace("%20", " ")
+
+        async with aiohttp.ClientSession() as session:
+            # Fetch and process company data
+            await fetch_company_data(
                 session,
                 company_name,
                 query,
                 batch_processor,
                 run_hash,
-                i
+                url_id
             )
-            tasks.append(task)
-            
-        await asyncio.gather(*tasks)
-    
-    # Flush any remaining records
-    batch_processor.flush()
+
+        # Flush any remaining records
+        batch_processor.flush()
+
+    except Exception as e:
+        logger.error(f"Error in main: {str(e)}")
+        raise
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main(None, None, None))  # Default values for direct script execution

@@ -132,7 +132,7 @@ async def process_company(
         except Exception as e:
             logger.error(f"❌ {company_name}: Failed to process - {e}")
 
-async def main():
+async def main(careers_page_url: str, run_hash: str, url_id: int):
     try:
         supabase = create_client(
             os.getenv("SUPABASE_URL"),
@@ -142,70 +142,30 @@ async def main():
         logger.info("🚀 Starting job scraping process")
         start_time = time.time()
         
-        # Fetch TeamTailor URLs from Supabase
-        urls = fetch_all_teamtailor_urls(supabase)
-        total_urls = len(urls)
-        logger.info(f"📋 Found {total_urls} TeamTailor URLs to process")
+        # Extract company name from URL
+        company_name = careers_page_url.split('//')[1].split('.')[0]
         
-        run_hash = str(int(time.time()))
         semaphore = asyncio.Semaphore(10)
         
-        # Process all companies concurrently
+        # Process the company
         async with aiohttp.ClientSession() as session:
-            tasks = []
-            for index, url_data in enumerate(urls):
-                url = url_data['url']
-                company_name = url.split('//')[1].split('.')[0]  # Extract company name from URL
-                
-                # Log the current URL number from the total queue
-                logger.info(f"🔄 Processing URL {index + 1}/{total_urls}: {company_name} at {url}")
-                
-                task = process_company(
-                    session=session,
-                    semaphore=semaphore,
-                    url=url,
-                    company_name=company_name,
-                    run_hash=run_hash,
-                    supabase=supabase,
-                    index=index,
-                    total_urls=total_urls
-                )
-                tasks.append(task)
-            
-            await asyncio.gather(*tasks)
+            await process_company(
+                session=session,
+                semaphore=semaphore,
+                url=careers_page_url,
+                company_name=company_name,
+                run_hash=run_hash,
+                supabase=supabase,
+                index=url_id,
+                total_urls=1
+            )
         
         end_time = time.time()
         duration = end_time - start_time
-        logger.info(f"✨ All companies processed in {duration:.2f} seconds")
+        logger.info(f"✨ Completed processing in {duration:.2f} seconds")
 
     except Exception as e:
         logger.error(f"❌ Script failed: {str(e)}")
 
-def fetch_all_teamtailor_urls(supabase_client: Client) -> List[dict]:
-    all_urls = []
-    offset = 0
-    limit = 1000
-
-    while True:
-        response = supabase_client.table('job_board_urls') \
-            .select('company_url') \
-            .eq('ats', 'teamtailor') \
-            .eq('is_enabled', True) \
-            .range(offset, offset + limit - 1) \
-            .execute()
-
-        batch = response.data
-        if not batch:
-            break
-
-        urls = [{'url': row['company_url']} for row in batch]
-        all_urls.extend(urls)
-        offset += limit
-
-    return all_urls
-
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except Exception as e:
-        logger.error(f"❌ Script failed: {e}")
+    asyncio.run(main(None, None, None))  # Default values for direct script execution
