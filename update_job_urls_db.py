@@ -247,30 +247,13 @@ def extract_company_name(row):
         # Remove protocol and www if present
         clean_url = url.replace('https://', '').replace('http://', '').replace('www.', '')
         
-        if ats == 'greenhouse':
-            # boards.greenhouse.io/company or job-boards.greenhouse.io/company
-            return clean_url.split('/')[-1]
-        elif ats == 'lever':
-            # jobs.lever.co/company
-            return clean_url.split('/')[-1]
-        elif ats == 'workday':
-            # company.workday.com/...
-            return clean_url.split('.')[0]
-        elif ats == 'smartrecruiters':
-            # jobs.smartrecruiters.com/company
-            return clean_url.split('/')[-1]
-        elif ats == 'jobvite':
-            # jobs.jobvite.com/company/search
-            return clean_url.split('/')[-2]
-        elif ats == 'recruitee':
-            # company.recruitee.com
-            return clean_url.split('.')[0]
-        elif ats == 'teamtailor':
-            # company.teamtailor.com
+        if ats in ['recruitee', 'teamtailor']:
+            # Extract company name from subdomain
             return clean_url.split('.')[0]
         else:
-            # Default to path-based extraction
-            return clean_url.split('/')[-1]
+            # Extract company name from the first part of the URL path
+            path_parts = clean_url.split('/')
+            return path_parts[1] if len(path_parts) > 1 else None
     except Exception:
         return None
 
