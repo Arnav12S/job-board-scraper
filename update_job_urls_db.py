@@ -50,7 +50,7 @@ engine = create_engine(db_url)
 print("Database engine created.")
 
 # Read CSV file
-csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'company_ats_data.csv')
+csv_path = '/Users/arnav/Downloads/GitHub/Linkedin-Jobs/company_ats_data.csv'
 df = pd.read_csv(csv_path)
 print("CSV file read successfully.")
 
@@ -233,36 +233,141 @@ df['is_enabled'] = df['ats'].str.lower().isin(enabled_ats)
 df['is_prospect'] = ~df['is_enabled']
 
 # Select and reorder columns - include is_prospect
-final_df = df[['company_url', 'ats', 'is_enabled', 'is_prospect']]
+df = df[['company_url', 'ats', 'is_enabled', 'is_prospect']]
+
+# Add required columns
+df['is_web_scraped'] = True
+
+# Extract company name based on ATS patterns
+def extract_company_name(row):
+    url = row['company_url']
+    ats = row['ats']
+    
+    try:
+        # Remove protocol and www if present
+        clean_url = url.replace('https://', '').replace('http://', '').replace('www.', '')
+        
+        if ats == 'greenhouse':
+            # boards.greenhouse.io/company or job-boards.greenhouse.io/company
+            return clean_url.split('/')[-1]
+        elif ats == 'lever':
+            # jobs.lever.co/company
+            return clean_url.split('/')[-1]
+        elif ats == 'workday':
+            # company.workday.com/...
+            return clean_url.split('.')[0]
+        elif ats == 'smartrecruiters':
+            # jobs.smartrecruiters.com/company
+            return clean_url.split('/')[-1]
+        elif ats == 'jobvite':
+            # jobs.jobvite.com/company or company.jobvite.com
+            if 'jobs.jobvite.com' in url:
+                return clean_url.split('/')[-1]
+            else:
+                return clean_url.split('.')[0]
+        else:
+            # Default to path-based extraction
+            return clean_url.split('/')[-1]
+    except Exception:
+        return None
+
+df['company'] = df.apply(extract_company_name, axis=1)
+
+# Prepare records for insertion
+records = df.to_dict(orient='records')
+
+# Update the SQL query to use :param style instead of %(param)s
+sql_query = """
+    INSERT INTO job_board_urls (
+        company_url, is_enabled, is_prospect, is_web_scraped, 
+        ats, company
+    )
+    VALUES (
+        :company_url, :is_enabled, :is_prospect, :is_web_scraped, 
+        :ats, :company
+    )
+    ON CONFLICT (company_url) 
+    DO UPDATE SET 
+        is_enabled = EXCLUDED.is_enabled,
+        is_prospect = EXCLUDED.is_prospect,
+        is_web_scraped = EXCLUDED.is_web_scraped,
+        ats = EXCLUDED.ats,
+        company = EXCLUDED.company;
+"""
+
+# Execute the query
+with engine.connect() as conn:
+    for record in records:
+        conn.execute(text(sql_query), record)
+    conn.commit()  # Add explicit commit
 
 # Create table and upload data
 try:
-    # Create table if it doesn't exist
+    # Create table if it doesn't exist with new columns
     create_table_sql = """
-    CREATE TABLE IF NOT EXISTS job_board_urls (
-        id SERIAL PRIMARY KEY,
-        company_url TEXT NOT NULL UNIQUE,
-        ats TEXT NOT NULL,
-        is_enabled BOOLEAN DEFAULT TRUE,
-        is_prospect BOOLEAN DEFAULT FALSE
-    );
+    DO $$ 
+    BEGIN
+        -- Create table if it doesn't exist
+        IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'job_board_urls') THEN
+            CREATE TABLE job_board_urls (
+                id SERIAL PRIMARY KEY,
+                company_url TEXT NOT NULL UNIQUE,
+                is_enabled BOOLEAN DEFAULT TRUE,
+                is_prospect BOOLEAN DEFAULT FALSE,
+                is_web_scraped BOOLEAN DEFAULT TRUE,
+                ats TEXT NOT NULL,
+                company TEXT NOT NULL
+            );
+        ELSE
+            -- Add columns if they don't exist
+            BEGIN
+                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'is_enabled') THEN
+                    ALTER TABLE job_board_urls ADD COLUMN is_enabled BOOLEAN DEFAULT TRUE;
+                END IF;
+                
+                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'is_prospect') THEN
+                    ALTER TABLE job_board_urls ADD COLUMN is_prospect BOOLEAN DEFAULT FALSE;
+                END IF;
+                
+                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'is_web_scraped') THEN
+                    ALTER TABLE job_board_urls ADD COLUMN is_web_scraped BOOLEAN DEFAULT TRUE;
+                END IF;
+                
+                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'ats') THEN
+                    ALTER TABLE job_board_urls ADD COLUMN ats TEXT NOT NULL DEFAULT 'unknown';
+                END IF;
+                
+                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'company') THEN
+                    ALTER TABLE job_board_urls ADD COLUMN company TEXT NOT NULL DEFAULT '';
+                END IF;
+            END;
+        END IF;
+    END $$;
     """
     
-    # Prepare upsert SQL with correct parameter binding
+    # Prepare upsert SQL with new columns
     upsert_sql = """
-    INSERT INTO job_board_urls (company_url, ats, is_enabled, is_prospect)
-    VALUES (:company_url, :ats, :is_enabled, :is_prospect)
+    INSERT INTO job_board_urls (
+        company_url, is_enabled, is_prospect, is_web_scraped, 
+        ats, company
+    )
+    VALUES (
+        %(company_url)s, %(is_enabled)s, %(is_prospect)s, %(is_web_scraped)s, 
+        %(ats)s, %(company)s
+    )
     ON CONFLICT (company_url) 
     DO UPDATE SET 
-        ats = EXCLUDED.ats,
         is_enabled = EXCLUDED.is_enabled,
-        is_prospect = EXCLUDED.is_prospect;
+        is_prospect = EXCLUDED.is_prospect,
+        is_web_scraped = EXCLUDED.is_web_scraped,
+        ats = EXCLUDED.ats,
+        company = EXCLUDED.company
     """
     
     with engine.connect() as conn:
         conn.execute(text(create_table_sql))
         
-        records = final_df.to_dict('records')
+        records = df.to_dict('records')
         for record in records:
             conn.execute(text(upsert_sql), record)
         

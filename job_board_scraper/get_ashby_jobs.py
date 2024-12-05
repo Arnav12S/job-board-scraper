@@ -37,6 +37,15 @@ logger = logging.getLogger(__name__)
 ASHBY_API_ENDPOINT = "https://jobs.ashbyhq.com/api/non-user-graphql?op=ApiJobBoardWithTeams"
 QUERY_PATH = "queries/ashby_jobs_outline.graphql"
 CONCURRENT_REQUESTS = 10  # Adjust based on your needs
+headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+}
+
+# Add near the top of the file, after the constants
+def load_query():
+    with open(QUERY_PATH, 'r') as f:
+        return f.read()
 
 # Database and Supabase setup
 def get_postgres_connection_string(supabase_url: str, supabase_key: str) -> str:
@@ -274,6 +283,7 @@ async def process_company(
             })
 
             variables = {"organizationHostedJobsPageName": company_name}
+            query = load_query()
             data = await fetch_ashby_data(session, ASHBY_API_ENDPOINT, query, headers, variables)
 
             if not data.get("data", {}).get("jobBoard"):
