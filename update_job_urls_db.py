@@ -1,11 +1,11 @@
 import pandas as pd
 import os
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
 from urllib.parse import urlparse
-from sqlalchemy.engine import URL
 import logging
 import re
+from supabase import create_client
+import time
 
 # Enable logging
 logging.basicConfig(level=logging.DEBUG)
@@ -261,107 +261,46 @@ def extract_company_name(row):
 
 df['company'] = df.apply(extract_company_name, axis=1)
 
-# Prepare records for insertion
-records = df.to_dict(orient='records')
+# Replace database connection setup with Supabase
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 
-# Update the SQL query to use :param style instead of %(param)s
-sql_query = """
-    INSERT INTO job_board_urls (
-        company_url, is_enabled, is_prospect, is_web_scraped, 
-        ats, company
-    )
-    VALUES (
-        :company_url, :is_enabled, :is_prospect, :is_web_scraped, 
-        :ats, :company
-    )
-    ON CONFLICT (company_url) 
-    DO UPDATE SET 
-        is_enabled = EXCLUDED.is_enabled,
-        is_prospect = EXCLUDED.is_prospect,
-        is_web_scraped = EXCLUDED.is_web_scraped,
-        ats = EXCLUDED.ats,
-        company = EXCLUDED.company;
-"""
+# Update required environment variables
+required_env_vars = ['SUPABASE_URL', 'SUPABASE_KEY']
+missing_vars = [var for var in required_env_vars if os.getenv(var) is None]
 
-# Execute the query
-with engine.connect() as conn:
-    for record in records:
-        conn.execute(text(sql_query), record)
-    conn.commit()  # Add explicit commit
+if missing_vars:
+    raise EnvironmentError(f"Missing environment variables: {', '.join(missing_vars)}")
 
-# Create table and upload data
-try:
-    # Create table if it doesn't exist with new columns
-    create_table_sql = """
-    DO $$ 
-    BEGIN
-        -- Create table if it doesn't exist
-        IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'job_board_urls') THEN
-            CREATE TABLE job_board_urls (
-                id SERIAL PRIMARY KEY,
-                company_url TEXT NOT NULL UNIQUE,
-                is_enabled BOOLEAN DEFAULT TRUE,
-                is_prospect BOOLEAN DEFAULT FALSE,
-                is_web_scraped BOOLEAN DEFAULT TRUE,
-                ats TEXT NOT NULL,
-                company TEXT NOT NULL
-            );
-        ELSE
-            -- Add columns if they don't exist
-            BEGIN
-                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'is_enabled') THEN
-                    ALTER TABLE job_board_urls ADD COLUMN is_enabled BOOLEAN DEFAULT TRUE;
-                END IF;
-                
-                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'is_prospect') THEN
-                    ALTER TABLE job_board_urls ADD COLUMN is_prospect BOOLEAN DEFAULT FALSE;
-                END IF;
-                
-                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'is_web_scraped') THEN
-                    ALTER TABLE job_board_urls ADD COLUMN is_web_scraped BOOLEAN DEFAULT TRUE;
-                END IF;
-                
-                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'ats') THEN
-                    ALTER TABLE job_board_urls ADD COLUMN ats TEXT NOT NULL DEFAULT 'unknown';
-                END IF;
-                
-                IF NOT EXISTS (SELECT FROM pg_attribute WHERE attrelid = 'job_board_urls'::regclass AND attname = 'company') THEN
-                    ALTER TABLE job_board_urls ADD COLUMN company TEXT NOT NULL DEFAULT '';
-                END IF;
-            END;
-        END IF;
-    END $$;
-    """
+# Initialize Supabase client
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+print("Supabase client initialized.")
+
+# Replace the database insertion code with this:
+def batch_upsert(records, batch_size=100):
+    total_records = len(records)
+    successful_upserts = 0
     
-    # Prepare upsert SQL with new columns
-    upsert_sql = """
-    INSERT INTO job_board_urls (
-        company_url, is_enabled, is_prospect, is_web_scraped, 
-        ats, company
-    )
-    VALUES (
-        :company_url, :is_enabled, :is_prospect, :is_web_scraped, 
-        :ats, :company
-    )
-    ON CONFLICT (company_url) 
-    DO UPDATE SET 
-        is_enabled = EXCLUDED.is_enabled,
-        is_prospect = EXCLUDED.is_prospect,
-        is_web_scraped = EXCLUDED.is_web_scraped,
-        ats = EXCLUDED.ats,
-        company = EXCLUDED.company
-    """
-    
-    with engine.connect() as conn:
-        conn.execute(text(create_table_sql))
-        
-        records = df.to_dict('records')
-        for record in records:
-            conn.execute(text(upsert_sql), record)
-        
-        conn.commit()
-        print(f"Successfully upserted {len(records)} records to database!")
+    for i in range(0, total_records, batch_size):
+        batch = records[i:i + batch_size]
+        try:
+            response = supabase.table('job_board_urls').upsert(
+                batch
+            ).execute()
+            
+            successful_upserts += len(batch)
+            print(f"Processed {successful_upserts}/{total_records} records")
+            
+            # Add a small delay between batches to prevent rate limiting
+            time.sleep(0.5)
+            
+        except Exception as e:
+            logging.error(f"Error processing batch {i//batch_size + 1}: {e}")
+            continue
 
-except Exception as e:
-    logging.error("An error occurred during the database operation", exc_info=True)
-    print(f"An error occurred: {e}")
+    return successful_upserts
+
+# Convert DataFrame to records and process
+records = df.to_dict('records')
+successful_upserts = batch_upsert(records)
+print(f"Successfully upserted {successful_upserts} records to Supabase!")
