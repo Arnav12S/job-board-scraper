@@ -43,8 +43,11 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
         self.page_number = 1
         self.existing_html_used = False
         
-        # Initialize stats collector
-        self.stats = self.settings.get('STATS_CLASS', None)
+        # Add current_date_utc
+        self.current_date_utc = datetime.now().strftime('%Y-%m-%d')
+        
+        # Initialize stats collector properly
+        self.stats = self.crawler.stats if hasattr(self, 'crawler') else None
         if self.stats:
             self.stats.set_value('start_time', time.time())
             
