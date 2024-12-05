@@ -20,7 +20,6 @@ aiohttp==3.11.9
 asyncio==3.4.3
 supabase==2.10.0
 tenacity==9.0.0
-typing==3.10.0
 logging==0.4.9.6
 fast-langdetect==0.2.2
 beautifulsoup4==4.12.3
