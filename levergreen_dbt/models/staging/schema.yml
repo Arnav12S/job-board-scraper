@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    database: your_database
+    schema: public
+    tables:
+      - name: workable_jobs
+      - name: jobvite_jobs
+      - name: recruitee_jobs
+      - name: smartrecruiters_jobs

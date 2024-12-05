@@ -30,7 +30,7 @@ def setup_postgres_connection(job_board_provider):
 
     cursor = conn.cursor()
     cursor.execute(
-        os.getenv("GET_BOARD_TOKENS_BASE_QUERY"), {"provider": job_board_provider}
+        os.getenv("PAGES_TO_SCRAPE_QUERY"), {"ats": job_board_provider}
     )
     conn.commit()
 
