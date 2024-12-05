@@ -24,37 +24,37 @@ jobs:
       - name: Run Scrapy Script
         run: |
           cd job_board_scraper
-                    python run_job_scraper.py  > run_job_scraper.log 2>&1
+          python run_job_scraper.py > run_job_scraper.log 2>&1 || (cat run_job_scraper.log && exit 1)
 
       - name: Run Ashby Script
         run: |
           cd job_board_scraper
-          python get_ashby_jobs.py > get_ashby_jobs.log 2>&1
+          python get_ashby_jobs.py > get_ashby_jobs.log 2>&1 || (cat get_ashby_jobs.log && exit 1)
 
       - name: Run TeamTailor Script
         run: |
           cd job_board_scraper
-          python get_teamtailor_jobs.py > get_teamtailor_jobs.log 2>&1
+          python get_teamtailor_jobs.py > get_teamtailor_jobs.log 2>&1 || (cat get_teamtailor_jobs.log && exit 1)
 
       - name: Run Recruitee Script
         run: |
           cd job_board_scraper
-          python get_recruitee_jobs.py > get_recruitee_jobs.log 2>&1
+          python get_recruitee_jobs.py > get_recruitee_jobs.log 2>&1 || (cat get_recruitee_jobs.log && exit 1)
 
       - name: Run SmartRecruiters Script
         run: |
           cd job_board_scraper
-          python get_smartrecruiters_jobs.py > get_smartrecruiters_jobs.log 2>&1
+          python get_smartrecruiters_jobs.py > get_smartrecruiters_jobs.log 2>&1 || (cat get_smartrecruiters_jobs.log && exit 1)
 
       - name: Run Workable Script
         run: |
           cd job_board_scraper
-          python get_workable_jobs.py > get_workable_jobs.log 2>&1
+          python get_workable_jobs.py > get_workable_jobs.log 2>&1 || (cat get_workable_jobs.log && exit 1)
 
       - name: Run Jobvite Script
         run: |
           cd job_board_scraper
-          python get_jobvite_jobs.py > get_jobvite_jobs.log 2>&1
+          python get_jobvite_jobs.py > get_jobvite_jobs.log 2>&1 || (cat get_jobvite_jobs.log && exit 1)
         
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
