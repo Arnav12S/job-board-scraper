@@ -1,53 +1,27 @@
 import pandas as pd
 import os
-from dotenv import load_dotenv
 from urllib.parse import urlparse
 import logging
 import re
-from supabase import create_client
+from supabase import create_client, Client
 import time
 
 # Enable logging
 logging.basicConfig(level=logging.DEBUG)
+# Supabase setup
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 
-# Load environment variables from the current directory
-dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
-load_dotenv(dotenv_path, verbose=True)
-
-# Database connection parameters
-DB_USER = os.getenv('PG_USER')
-DB_PASSWORD = os.getenv('PG_PASSWORD')
-DB_HOST = os.getenv('PG_HOST')
-DB_NAME = os.getenv('PG_DATABASE')
-
-# Print only necessary environment variables
-print(f"DB_USER: {DB_USER} (type: {type(DB_USER)})")
-print(f"DB_HOST: {DB_HOST} (type: {type(DB_HOST)})")
-print(f"DB_NAME: {DB_NAME} (type: {type(DB_NAME)})")
-
-# Check for missing environment variables
-required_env_vars = ['PG_USER', 'PG_PASSWORD', 'PG_HOST', 'PG_DATABASE']
+# Check for required Supabase environment variables
+required_env_vars = ['SUPABASE_URL', 'SUPABASE_KEY']
 missing_vars = [var for var in required_env_vars if os.getenv(var) is None]
 
 if missing_vars:
     raise EnvironmentError(f"Missing environment variables: {', '.join(missing_vars)}")
 
-# Ensure DB_PASSWORD is a string
-if not isinstance(DB_PASSWORD, str):
-    DB_PASSWORD = str(DB_PASSWORD)
-
-# Create database connection URL
-db_url = URL.create(
-    drivername="postgresql",
-    username=DB_USER,
-    password=DB_PASSWORD,
-    host=DB_HOST,
-    database=DB_NAME
-)
-print("Database URL created.")
-
-engine = create_engine(db_url)
-print("Database engine created.")
+# Initialize Supabase client
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+print("Supabase client initialized.")
 
 # Read CSV file
 csv_path = '/Users/arnav/Downloads/GitHub/Linkedin-Jobs/company_ats_data.csv'
@@ -261,21 +235,6 @@ def extract_company_name(row):
 
 df['company'] = df.apply(extract_company_name, axis=1)
 
-# Replace database connection setup with Supabase
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY')
-
-# Update required environment variables
-required_env_vars = ['SUPABASE_URL', 'SUPABASE_KEY']
-missing_vars = [var for var in required_env_vars if os.getenv(var) is None]
-
-if missing_vars:
-    raise EnvironmentError(f"Missing environment variables: {', '.join(missing_vars)}")
-
-# Initialize Supabase client
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-print("Supabase client initialized.")
-
 # Replace the database insertion code with this:
 def batch_upsert(records, batch_size=100):
     total_records = len(records)
@@ -284,8 +243,10 @@ def batch_upsert(records, batch_size=100):
     for i in range(0, total_records, batch_size):
         batch = records[i:i + batch_size]
         try:
+            # Use upsert with on_conflict parameter to handle duplicates
             response = supabase.table('job_board_urls').upsert(
-                batch
+                batch,
+                on_conflict='company_url'  # Specify the unique constraint column
             ).execute()
             
             successful_upserts += len(batch)
