@@ -5,6 +5,8 @@ import os
 import time
 from datetime import datetime, timezone
 from urllib.parse import urlparse
+from dataclasses import dataclass
+from typing import Optional, Dict, Any
 
 import aiohttp
 import duckdb
@@ -15,7 +17,7 @@ from msgspec.json import decode
 from polars import DataFrame
 from supabase import Client, create_client
 from supabase import StorageException
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 from job_board_scraper.utils import general as util
 import dotenv
@@ -69,6 +71,104 @@ class Team(Struct):
     id: str
     name: str
     parentTeamId: Optional[str]
+
+class BatchProcessor:
+    def __init__(self, supabase_client, batch_size=100):
+        self.supabase = supabase_client
+        self.batch_size = batch_size
+        self.logger = logging.getLogger(__name__)
+        self.validator = JobDataValidator()
+        self._jobs_batch = []
+        self._invalid_jobs = []
+
+    async def add_job(self, job_data: Dict[str, Any]):
+        validation_result = self.validator.validate_job_data(job_data)
+        
+        if validation_result.is_valid:
+            self._jobs_batch.append(job_data)
+            
+            if len(self._jobs_batch) >= self.batch_size:
+                await self.flush()
+        else:
+            self._invalid_jobs.append((job_data, validation_result.errors))
+            self.logger.error(
+                f"Invalid job data skipped",
+                extra={
+                    'job_data': job_data,
+                    'validation_errors': validation_result.errors
+                }
+            )
+
+    async def flush(self):
+        if not self._jobs_batch:
+            return
+
+        try:
+            self.logger.info(f"Processing batch of {len(self._jobs_batch)} jobs")
+            
+            response = await self.supabase.table("ashby_jobs_outline") \
+                .upsert(self._jobs_batch, on_conflict="opening_link") \
+                .execute()
+
+            self.logger.info(
+                f"Successfully processed batch",
+                extra={'batch_size': len(self._jobs_batch)}
+            )
+            
+            self._jobs_batch = []
+            
+        except Exception as e:
+            self.logger.error(
+                "Batch processing failed",
+                extra={
+                    'error': str(e),
+                    'batch_size': len(self._jobs_batch)
+                }
+            )
+            raise
+
+    def get_invalid_jobs(self):
+        return self._invalid_jobs
+
+@dataclass
+class JobValidationResult:
+    is_valid: bool
+    errors: Dict[str, str]
+
+class JobDataValidator:
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
+    def validate_job_data(self, job_data: Dict[str, Any]) -> JobValidationResult:
+        errors = {}
+        
+        # Required fields validation
+        required_fields = ['opening_title', 'opening_link', 'company_name', 'source']
+        for field in required_fields:
+            if not job_data.get(field):
+                errors[field] = f"Missing required field: {field}"
+
+        # URL format validation
+        if job_data.get('opening_link'):
+            if not job_data['opening_link'].startswith(('http://', 'https://')):
+                errors['opening_link'] = "Invalid URL format"
+
+        # Length validations
+        if len(job_data.get('opening_title', '')) > 255:
+            errors['opening_title'] = "Title exceeds maximum length of 255 characters"
+
+        # Log validation results
+        if errors:
+            self.logger.warning(
+                f"Validation failed for job: {job_data.get('opening_title', 'Unknown Title')}",
+                extra={'errors': errors, 'job_data': job_data}
+            )
+        
+        return JobValidationResult(
+            is_valid=len(errors) == 0,
+            errors=errors
+        )
+
 
 # Helper Functions
 def determine_row_id(spider_id: int, url_id: int, row_id: int, created_at: int, k: int = 0) -> str:
@@ -155,182 +255,94 @@ async def fetch_ashby_data(session: aiohttp.ClientSession, url: str, query: str,
         logger.error(f"Unexpected error for URL {url}: {e}")
     return {}
 
-async def process_company(session: aiohttp.ClientSession, semaphore: asyncio.Semaphore, url: str, query: str, headers: dict, ashby_api_endpoint: str, run_hash: str, con: duckdb.DuckDBPyConnection):
+async def process_company(
+    session: aiohttp.ClientSession,
+    semaphore: asyncio.Semaphore,
+    url: str,
+    supabase: Client,
+    run_hash: str,
+    batch_processor: BatchProcessor
+):
     async with semaphore:
-        ashby_company = url.split("/")[-1].replace("%20", " ")
-
-        variables = {"organizationHostedJobsPageName": ashby_company}
-        data = await fetch_ashby_data(session, ashby_api_endpoint, query, headers, variables)
-
-        if not data.get("data", {}).get("jobBoard"):
-            logger.info(f"No job board data found for {ashby_company}. Skipping.")
-            return
-
-        job_listings = data["data"]["jobBoard"]["jobPostings"]
-        logger.info(f"{ashby_company}: Found {len(job_listings)} jobs")
-
-        ashby_postings_final = []
-        ashby_departments_final = []
-        ashby_locations_final = []
-
         try:
-            # Process Postings
-            posting_data = decode(json.dumps(job_listings), type=List[Posting])
-            for j, record in enumerate(posting_data):
-                # Process Secondary Locations
-                all_locations_json = []
-                if record.secondaryLocations:
-                    for k, location in enumerate(record.secondaryLocations):
-                        location_json_record = {
-                            "levergreen_id": determine_row_id(5, j, k, 0, k),
-                            "opening_id": record.id,
-                            "secondary_location_id": location.locationId,
-                            "secondary_location_name": location.locationName
-                        }
-                        all_locations_json.append(location_json_record)
+            company_name = url.split("/")[-1].replace("%20", " ")
+            
+            logger.info(f"Processing company: {company_name}", extra={
+                'company': company_name,
+                'url': url,
+                'run_hash': run_hash
+            })
 
-                if all_locations_json:
-                    df_locations = pl.DataFrame(all_locations_json)
-                    df_locations = df_locations.with_columns([
-                        pl.lit(ashby_company).alias("company_name"),
-                        pl.lit(f"https://jobs.ashbyhq.com/{ashby_company}").alias("source"),
-                        pl.lit(run_hash).alias("run_hash"),
-                        pl.lit(False).alias("existing_json_used"),
-                        pl.lit(None).alias("raw_json_file_location")
-                    ])
-                    ashby_locations_final.append(df_locations)
+            variables = {"organizationHostedJobsPageName": company_name}
+            data = await fetch_ashby_data(session, ASHBY_API_ENDPOINT, query, headers, variables)
 
-                # Process Postings
-                posting_json_record = {
-                    "levergreen_id": determine_row_id(4, j, j, 0),
-                    "opening_id": record.id,
-                    "opening_name": record.title,
-                    "department_id": record.teamId,
-                    "location_id": record.locationId,
-                    "location_name": record.locationName,
-                    "employment_type": record.employmentType,
-                    "compensation_tier": record.compensationTierSummary,
-                    "opening_link": f"https://jobs.ashbyhq.com/{ashby_company}/{record.id}",
-                    "company_name": ashby_company,
-                    "source": f"https://jobs.ashbyhq.com/{ashby_company}",
-                    "run_hash": run_hash,
-                    "existing_json_used": False,
-                    "raw_json_file_location": None
+            if not data.get("data", {}).get("jobBoard"):
+                logger.warning(f"No job board data for {company_name}", extra={
+                    'company': company_name,
+                    'url': url
+                })
+                return
+
+            job_listings = data["data"]["jobBoard"]["jobPostings"]
+            logger.info(f"Found {len(job_listings)} jobs for {company_name}")
+
+            # Process jobs
+            for job in job_listings:
+                job_data = {
+                    'levergreen_id': determine_row_id(4, 0, len(job_listings), int(time.time())),
+                    'opening_title': job.get('title'),
+                    'opening_link': f"https://jobs.ashbyhq.com/{company_name}/{job.get('id')}",
+                    'company_name': company_name,
+                    'source': url,
+                    'run_hash': run_hash
+                    # Add other fields as needed
                 }
+                
+                await batch_processor.add_job(job_data)
 
-                ashby_postings_final.append(posting_json_record)
-
-            if ashby_postings_final:
-                # Convert postings to Polars DataFrame
-                df_postings = pl.DataFrame(ashby_postings_final)
-
-                # Convert DataFrame to list of dictionaries
-                postings_dicts = df_postings.to_dicts()
-
-                # Perform upsert
-                try:
-                    response = supabase.table("ashby_jobs_outline").upsert(postings_dicts, on_conflict="opening_link").execute()
-                    if hasattr(response, 'error') and response.error:
-                        logger.error(f"Upsert error: {response.error}")
-                    else:
-                        logger.debug(f"{ashby_company}: Upserted {len(postings_dicts)} job postings.")
-                except StorageException as e:
-                    logger.error(f"Supabase upsert error: {e}")
-
-            # Insert Locations
-            if ashby_locations_final:
-                df_all_locations = pl.concat(ashby_locations_final)
-                try:
-                    # Corrected on_conflict parameter
-                    response = supabase.table("ashby_job_locations").upsert(df_all_locations.to_dicts(), on_conflict="opening_id,secondary_location_id").execute()
-                    if hasattr(response, 'error') and response.error:
-                        logger.error(f"Upsert error for locations: {response.error}")
-                    else:
-                        logger.debug(f"{ashby_company}: Upserted {len(df_all_locations)} locations.")
-                except StorageException as e:
-                    logger.error(f"Supabase upsert error for locations: {e}")
-
-            # Process Teams
-            team_data = decode(json.dumps(data["data"]["jobBoard"]["teams"]), type=List[Team])
-            all_teams_json = []
-            for j, record in enumerate(team_data):
-                team_json_record = {
-                    "levergreen_id": determine_row_id(4, j, j, 0),
-                    "department_id": record.id,
-                    "department_name": record.name,
-                    "parent_department_id": record.parentTeamId,
-                    "company_name": ashby_company,
-                    "source": f"https://jobs.ashbyhq.com/{ashby_company}",
-                    "run_hash": run_hash,
-                    "existing_json_used": False,
-                    "raw_json_file_location": None
-                }
-                all_teams_json.append(team_json_record)
-
-            # Insert Departments using Upsert
-            if all_teams_json:
-                df_departments = pl.DataFrame(all_teams_json)
-                departments_dicts = df_departments.to_dicts()
-
-                try:
-                    response = supabase.table("ashby_job_departments").upsert(departments_dicts, on_conflict="department_id").execute()
-                    if hasattr(response, 'error') and response.error:
-                        logger.error(f"Upsert error for departments: {response.error}")
-                    else:
-                        logger.debug(f"{ashby_company}: Upserted {len(departments_dicts)} departments.")
-                except StorageException as e:
-                    logger.error(f"Supabase upsert error for departments: {e}")
+            # Flush any remaining jobs in the batch
+            await batch_processor.flush()
 
         except Exception as e:
-            logger.error(f"Error processing {ashby_company}: {str(e)}")
+            logger.error(f"Error processing {company_name}", extra={
+                'company': company_name,
+                'error': str(e),
+                'url': url
+            })
+            raise
 
 async def main_with_params(careers_page_urls: List[str], run_hash: str):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    query_path = os.path.join(current_dir, QUERY_PATH)
-
-    # Read GraphQL query
     try:
-        with open(query_path, 'r') as f:
-            query = f.read()
-        logger.info("Successfully read GraphQL query.")
-    except FileNotFoundError:
-        logger.error(f"GraphQL query file not found at {query_path}.")
-        return
-    except Exception as e:
-        logger.error(f"Error reading GraphQL query: {e}")
-        return
+        supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+        batch_processor = BatchProcessor(supabase)
+        
+        semaphore = asyncio.Semaphore(CONCURRENT_REQUESTS)
+        
+        async with aiohttp.ClientSession() as session:
+            tasks = [
+                process_company(
+                    session=session,
+                    semaphore=semaphore,
+                    url=url,
+                    supabase=supabase,
+                    run_hash=run_hash,
+                    batch_processor=batch_processor
+                )
+                for url in careers_page_urls
+            ]
+            await asyncio.gather(*tasks)
 
-    headers = {"Content-Type": "application/json"}
-
-    # Initialize DuckDB
-    try:
-        con = duckdb.connect(database=":memory:")
-        logger.info("DuckDB connection established.")
-    except Exception as e:
-        logger.error(f"Failed to connect to DuckDB: {e}")
-        return
-
-    semaphore = asyncio.Semaphore(CONCURRENT_REQUESTS)
-
-    async with aiohttp.ClientSession() as session:
-        tasks = [
-            process_company(
-                session=session,
-                semaphore=semaphore,
-                url=url,
-                query=query,
-                headers=headers,
-                ashby_api_endpoint=ASHBY_API_ENDPOINT,
-                run_hash=run_hash,
-                con=con
+        # Log statistics about invalid jobs
+        invalid_jobs = batch_processor.get_invalid_jobs()
+        if invalid_jobs:
+            logger.warning(
+                f"Found {len(invalid_jobs)} invalid jobs during processing",
+                extra={'invalid_jobs_count': len(invalid_jobs)}
             )
-            for url in careers_page_urls
-        ]
-        await asyncio.gather(*tasks, return_exceptions=True)
 
-    # Close DuckDB connection
-    con.close()
-    logger.info("DuckDB connection closed.")
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        raise
 
 # New function to handle single URL processing (for run_job_scraper.py)
 def main_with_hash(careers_page_url: str, run_hash: str, url_id: int):

@@ -7,47 +7,57 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from job_board_scraper.utils import pipline_util
-from supabase import create_client, Client
+
+from io import BytesIO
 from dotenv import load_dotenv
+from botocore.exceptions import ClientError
+
 import os
+import boto3
 import logging
+import psycopg2
 
 logger = logging.getLogger("logger")
+load_dotenv()
 
-class JobScraperPipelineSupabase:
+class JobScraperPipelinePostgres:
     def __init__(self):
-        load_dotenv()
-        self.supabase_url = os.getenv("SUPABASE_URL")
-        self.supabase_key = os.getenv("SUPABASE_KEY")
+        ## Connection Details
+        self.hostname = os.environ.get("PG_HOST")
+        self.username = os.environ.get("PG_USER")
+        self.password = os.environ.get("PG_PASSWORD")
+        self.database = os.environ.get("PG_DATABASE")
 
-        if not self.supabase_url or not self.supabase_key:
-            raise ValueError("SUPABASE_URL or SUPABASE_KEY environment variables are not set")
+        ## Create/Connect to database
+        self.connection = psycopg2.connect(
+            host=self.hostname,
+            user=self.username,
+            password=self.password,
+            dbname=self.database,
+        )
 
-        self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
+        ## Create cursor, used to execute commands
+        self.cur = self.connection.cursor()
 
     def open_spider(self, spider):
         self.table_name = spider.name
         initial_table_schema = pipline_util.set_initial_table_schema(self.table_name)
-        create_table_statement = pipline_util.create_table_schema(self.table_name, initial_table_schema)
-        
-        # Supabase does not support direct SQL execution for schema changes, so ensure your tables are pre-created
-        logger.info(f"Ensure table {self.table_name} exists with the correct schema.")
+        create_table_statement = pipline_util.create_table_schema(
+            self.table_name, initial_table_schema
+        )
+        self.cur.execute(create_table_statement)
 
     def process_item(self, item, spider):
-        try:
-            insert_item_statement, table_values_list = pipline_util.create_insert_item(self.table_name, item)
-            # Supabase client does not execute raw SQL, so we need to use the upsert method
-            data = dict(zip(table_values_list, item))
-            response = self.supabase.table(self.table_name).upsert(data).execute()
-            if hasattr(response, 'error') and response.error:
-                logger.error(f"Error upserting data: {response.error}")
-            else:
-                logger.info(f"Successfully inserted item into {self.table_name}")
-        except Exception as e:
-            logger.error(f"Failed to insert item: {e}")
-            logger.error(f"Item contents: {dict(item)}")
-        
+        ## Execute insert of data into database
+        insert_item_statement, table_values_list = pipline_util.create_insert_item(
+            self.table_name, item
+        )
+        # logger.info(f"INSERT STMT {insert_item_statement} ____ {table_values_list}")
+        self.cur.execute(insert_item_statement, tuple(table_values_list))
+        self.connection.commit()
         return item
 
     def close_spider(self, spider):
-        logger.info(f"Closing spider {spider.name}")
+        ## Close cursor & connection to database
+        self.cur.close()
+        self.connection.close()
