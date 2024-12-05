@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+print("RAW_HTML_S3_BUCKET:", os.getenv("RAW_HTML_S3_BUCKET"))
+
 # FEEDS = {"data.csv": {"format": "csv", "overwrite": True}}
 
 BOT_NAME = "job_board_scraper"
@@ -78,8 +80,7 @@ TELNETCONSOLE_PORT = None  # https://docs.scrapy.org/en/latest/topics/telnetcons
 # }
 
 # Configure item pipelines
-# See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {"job_board_scraper.pipelines.JobScraperPipelineSupabase": 299}
+ITEM_PIPELINES = {"job_board_scraper.pipelines.JobScraperPipelinePostgres": 299}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -117,7 +118,3 @@ FEEDS = {
 
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 LOGSTATS_INTERVAL = 0
-
-# Add Supabase credentials
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")

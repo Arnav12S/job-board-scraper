@@ -40,17 +40,13 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
         )
         self.settings = get_project_settings()
         self.current_time = time.time()
-        self.page_number = 1
-        self.existing_html_used = False
-        
-        # Add current_date_utc
-        self.current_date_utc = datetime.now().strftime('%Y-%m-%d')
-        
-        # Initialize stats collector properly
-        self.stats = self.crawler.stats if hasattr(self, 'crawler') else None
-        if self.stats:
-            self.stats.set_value('start_time', time.time())
-            
+        self.page_number = 1  # default
+        #self.updated_at = int(self.current_time)
+        #self.created_at = int(self.current_time)
+        self.current_date_utc = datetime.utcfromtimestamp(self.current_time).strftime(
+            "%Y-%m-%d"
+        )
+        self.existing_html_used = False  # Initially set this to false, change later on in finalize_response if True
         self.logger.info(f"Initialized Spider, {self.html_source}")
         
         self.raw_html_s3_bucket = os.getenv("RAW_HTML_S3_BUCKET")
