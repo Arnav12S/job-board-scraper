@@ -45,7 +45,10 @@ jobs:
 
       - name: Run dbt models
         id: run_dbt_step
-        run: cd levergreen_dbt && dbt run
+        run: |
+          cd levergreen_dbt
+          dbt run > dbt_run.log 2>&1
+          cat dbt_run.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -53,7 +56,10 @@ jobs:
           PG_USER: ${{ secrets.PG_USER }}
 
       - name: Test dbt models
-        run: cd levergreen_dbt && dbt test
+        run: |
+          cd levergreen_dbt
+          dbt test >> dbt_run.log 2>&1
+          cat dbt_run.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -62,7 +68,10 @@ jobs:
       
       - name: Check Freshness of dbt models
         if: ${{ always() && steps.run_dbt_step.conclusion == 'success'}}
-        run: cd levergreen_dbt && dbt source freshness
+        run: |
+          cd levergreen_dbt
+          dbt source freshness >> dbt_run.log 2>&1
+          cat dbt_run.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -88,4 +97,15 @@ jobs:
               --s3-bucket-name "${{ secrets.ELEMENTARY_S3_BUCKET }}"
               --update-bucket-website "true"
               --env "prod"
+
+      - name: Commit and Push Logs
+        if: always()
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add levergreen_dbt/dbt_run.log
+          git commit -m "Add dbt run logs"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

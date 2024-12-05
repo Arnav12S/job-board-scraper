@@ -12,7 +12,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-print("RAW_HTML_S3_BUCKET:", os.getenv("RAW_HTML_S3_BUCKET"))
+RAW_HTML_S3_BUCKET = os.getenv("RAW_HTML_S3_BUCKET")
+print(RAW_HTML_S3_BUCKET)
 
 # FEEDS = {"data.csv": {"format": "csv", "overwrite": True}}
 

@@ -10,6 +10,7 @@ from datetime import datetime
 from dataclasses import dataclass
 import aiohttp
 import asyncio
+from supabase import create_client
 
 from job_board_scraper.utils import general as util
 
@@ -30,8 +31,6 @@ supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
 if not supabase_url or not supabase_key:
     raise EnvironmentError("SUPABASE_URL and SUPABASE_KEY must be set")
-
-connection_string = f"postgresql://postgres:{supabase_key}@{supabase_url.split('//')[1]}/postgres"
 
 # Data Structures
 class SecondaryLocation(Struct):
@@ -54,8 +53,8 @@ class Team(Struct):
     parentTeamId: Optional[str]
 
 class BatchProcessor:
-    def __init__(self, connection_string: str, batch_size: int = 100):
-        self.connection_string = connection_string
+    def __init__(self, supabase_client, batch_size: int = 100):
+        self.supabase = supabase_client
         self.batch_size = batch_size
         self._jobs_batch = []
         self._departments_batch = []
@@ -69,34 +68,22 @@ class BatchProcessor:
         if len(self._jobs_batch) >= self.batch_size:
             self.flush()
 
-    def flush(self):
+    async def flush(self):
         if not any([self._jobs_batch, self._departments_batch, self._locations_batch]):
             return
 
         try:
             if self._jobs_batch:
-                pl.DataFrame(self._jobs_batch).write_database(
-                    "ashby_jobs_outline",
-                    self.connection_string,
-                    if_exists="append",
-                    engine="sqlalchemy"
-                )
+                await self.supabase.table("ashby_jobs_outline").upsert(self._jobs_batch).execute()
+                logger.info(f"Successfully inserted {len(self._jobs_batch)} jobs")
                 
             if self._departments_batch:
-                pl.DataFrame(self._departments_batch).write_database(
-                    "ashby_job_departments",
-                    self.connection_string,
-                    if_exists="append",
-                    engine="sqlalchemy"
-                )
+                await self.supabase.table("ashby_job_departments").upsert(self._departments_batch).execute()
+                logger.info(f"Successfully inserted {len(self._departments_batch)} departments")
                 
             if self._locations_batch:
-                pl.DataFrame(self._locations_batch).write_database(
-                    "ashby_job_locations",
-                    self.connection_string,
-                    if_exists="append",
-                    engine="sqlalchemy"
-                )
+                await self.supabase.table("ashby_job_locations").upsert(self._locations_batch).execute()
+                logger.info(f"Successfully inserted {len(self._locations_batch)} locations")
 
             # Clear batches after successful write
             self._jobs_batch = []
@@ -104,7 +91,7 @@ class BatchProcessor:
             self._locations_batch = []
             
         except Exception as e:
-            logger.error(f"Failed to write batch to database: {e}")
+            logger.error(f"Failed to flush batches to database: {e}")
             raise
 
 def process_company_data(
@@ -226,8 +213,11 @@ async def fetch_company_data(
 
 async def main(careers_page_url: str, run_hash: str, url_id: int):
     try:
-        # Initialize the batch processor
-        batch_processor = BatchProcessor(connection_string)
+        # Create Supabase client
+        supabase = create_client(supabase_url, supabase_key)
+        
+        # Initialize the batch processor with Supabase client
+        batch_processor = BatchProcessor(supabase)
 
         # Read the GraphQL query from a file
         with open(QUERY_PATH, 'r') as f:
