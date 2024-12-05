@@ -135,23 +135,23 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
             meta={'dont_retry': True}
         )
 
-    def export_html(self, response_html):
-        if not self.s3_html_path:
-            self.logger.warning("S3_HTML_PATH is not set. Skipping HTML export.")
-            return
-        if not self.s3_client:
-            self.logger.warning("S3 client is not initialized. Skipping HTML export.")
-            return
-        try:
-            self.s3_client.put_object(
-                Bucket=self.settings["S3_HTML_BUCKET"],
-                Key=self.s3_html_path,
-                Body=response_html,
-                ContentType="text/html",
-            )
-            self.logger.info("Uploaded raw HTML to s3")
-        except Exception as e:
-            self.logger.error(f"Failed to upload HTML to S3: {e}")
+    #def export_html(self, response_html):
+    #    if not self.s3_html_path:
+    #        self.logger.warning("S3_HTML_PATH is not set. Skipping HTML export.")
+    #        return
+    #    if not self.s3_client:
+    #        self.logger.warning("S3 client is not initialized. Skipping HTML export.")
+    #        return
+    #    try:
+    #        self.s3_client.put_object(
+    #            Bucket=self.settings["S3_HTML_BUCKET"],
+    #            Key=self.s3_html_path,
+    #            Body=response_html,
+    #            ContentType="text/html",
+    #        )
+    #        self.logger.info("Uploaded raw HTML to s3")
+    #    except Exception as e:
+    #        self.logger.error(f"Failed to upload HTML to S3: {e}")
 
     def determine_row_id(self, i):
         return util.hash_ids.encode(
@@ -165,7 +165,8 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
             return self.html_file["Body"].read()
         else:
             if self.s3_client:
-                self.export_html(response.text)
+                #self.export_html(response.text)
+                pass
             return response.text
 
     # Greenhouse has exposed a new URL with different features for scraping for some companies

@@ -115,21 +115,21 @@ class JobScraperPipelinePostgres:
         except Exception as e:
             self.logger.error(f"Error closing connection pool: {e}")
 
-    def export_html(self, item):
-        try:
-            html_content = item.get('html_content')
-            url = item.get('url')
-            if html_content and url:
-                object_key = f"html/{self._generate_object_key(url)}.html"
-                self.s3_client.put_object(
-                    Bucket=self.raw_html_s3_bucket,
-                    Key=object_key,
-                    Body=html_content.encode('utf-8'),
-                    ContentType='text/html'
-                )
-                logging.info(f"Exported HTML to s3://{self.raw_html_s3_bucket}/{object_key}")
-        except Exception as e:
-            logging.error(f"Failed to export HTML to S3: {e}")
+    #def export_html(self, item):
+    ##    try:
+    ##        html_content = item.get('html_content')
+    ##        url = item.get('url')
+    ##        if html_content and url:
+    ##            object_key = f"html/{self._generate_object_key(url)}.html"
+    ##            self.s3_client.put_object(
+    ##                Bucket=self.raw_html_s3_bucket,
+    ##                Key=object_key,
+    ##                Body=html_content.encode('utf-8'),
+    ##                ContentType='text/html'
+    ##            )
+    ##            logging.info(f"Exported HTML to s3://{self.raw_html_s3_bucket}/{object_key}")
+    ##    except Exception as e:
+    #        logging.error(f"Failed to export HTML to S3: {e}")
 
     def _generate_object_key(self, url):
         return url.replace("https://", "").replace("/", "_")

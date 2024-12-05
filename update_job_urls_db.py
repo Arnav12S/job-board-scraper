@@ -149,9 +149,11 @@ def clean_url(url, ats):
     # ATS-Specific Normalization
     if ats == 'ashbyhq':
         if netloc.startswith('jobs.ashbyhq.com'):
-            company = path.strip('/')
+            # Extract the company name from the path
+            company = path.strip('/').split('/')[0]
             if company:
-                return f"https://jobs.ashbyhq.com/{company}"
+                # Correctly format the URL for Ashby
+                return f"https://jobs.ashbyhq.com/{company}/jobs"
         return None
     
     elif ats == 'greenhouse':
@@ -338,8 +340,8 @@ try:
         ats, company
     )
     VALUES (
-        %(company_url)s, %(is_enabled)s, %(is_prospect)s, %(is_web_scraped)s, 
-        %(ats)s, %(company)s
+        :company_url, :is_enabled, :is_prospect, :is_web_scraped, 
+        :ats, :company
     )
     ON CONFLICT (company_url) 
     DO UPDATE SET 
