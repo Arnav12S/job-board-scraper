@@ -260,11 +260,14 @@ def extract_company_name(row):
             # jobs.smartrecruiters.com/company
             return clean_url.split('/')[-1]
         elif ats == 'jobvite':
-            # jobs.jobvite.com/company or company.jobvite.com
-            if 'jobs.jobvite.com' in url:
-                return clean_url.split('/')[-1]
-            else:
-                return clean_url.split('.')[0]
+            # jobs.jobvite.com/company/search
+            return clean_url.split('/')[-2]
+        elif ats == 'recruitee':
+            # company.recruitee.com
+            return clean_url.split('.')[0]
+        elif ats == 'teamtailor':
+            # company.teamtailor.com
+            return clean_url.split('.')[0]
         else:
             # Default to path-based extraction
             return clean_url.split('/')[-1]
