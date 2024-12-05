@@ -31,12 +31,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           HASHIDS_SALT: ${{ secrets.HASHIDS_SALT }}
           PAGES_TO_SCRAPE_QUERY: ${{ secrets.PAGES_TO_SCRAPE_QUERY }}
-          ASHBY_PAGES_TO_SCRAPE_QUERY: ${{ secrets.ASHBY_PAGES_TO_SCRAPE_QUERY }}
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           PG_USER: ${{ secrets.PG_USER }}
           CHUNK_SIZE: ${{ secrets.CHUNK_SIZE }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
       - name: Upload Scrapy Logs
         uses: actions/upload-artifact@v3

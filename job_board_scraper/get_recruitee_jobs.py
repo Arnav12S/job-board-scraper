@@ -23,6 +23,29 @@ def main():
         logger.error(f"An error occurred: {e}")
         exit(1)
 
+def get_recruitee_urls(supabase_client) -> list[dict]:
+    all_urls = []
+    offset = 0
+    limit = 1000
+
+    while True:
+        response = supabase_client.table('job_board_urls') \
+            .select('company_url') \
+            .eq('ats', 'recruitee') \
+            .eq('is_enabled', True) \
+            .range(offset, offset + limit - 1) \
+            .execute()
+
+        batch = response.data
+        if not batch:
+            break
+
+        urls = [{'url': row['company_url']} for row in batch]
+        all_urls.extend(urls)
+        offset += limit
+
+    return all_urls
+
 def run_spider():
     try:
         # Initialize Supabase client
@@ -35,13 +58,8 @@ def run_spider():
         test_response = supabase.table("recruitee_jobs_outline").select("*", count='exact').execute()
         logger.info(f"Connected to Supabase - current row count: {test_response.count}")
         
-        # Get careers page URLs using Supabase
-        response = supabase.rpc(
-            'get_pages_to_scrape',
-            {'query': os.getenv("RECRUITEE_PAGES_TO_SCRAPE_QUERY")}
-        ).execute()
-        careers_page_urls = response.data
-        
+        # Get careers page URLs using pagination
+        careers_page_urls = get_recruitee_urls(supabase)
         logger.info(f"Fetched {len(careers_page_urls)} career page URLs from Supabase")
 
         run_hash = str(int(time.time()))
