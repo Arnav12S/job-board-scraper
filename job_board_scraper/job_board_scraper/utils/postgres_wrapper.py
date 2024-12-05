@@ -13,13 +13,8 @@ class PostgresWrapper:
 
     def connection(self):
         ## Create/Connect to database
-        return psycopg2.connect(
-            host=self.hostname,
-            user=self.username,
-            password=self.password,
-            dbname=self.database,
-            port=self.port,
-        )
+        connection_string = f"postgresql://{self.username}:{self.password}@{self.hostname}:{self.port}/{self.database}"
+        return psycopg2.connect(connection_string)
 
     def cursor(self):
         ## Create cursor, used to execute commands

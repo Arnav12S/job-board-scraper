@@ -8,8 +8,6 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from job_board_scraper.utils import general as util
 from typing import List, Optional
-import json
-import brotli
 
 load_dotenv()
 

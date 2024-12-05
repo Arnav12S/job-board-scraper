@@ -5,7 +5,6 @@ import os
 import time
 from typing import List, Optional
 import aiohttp
-from bs4 import BeautifulSoup
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from job_board_scraper.utils import general as util

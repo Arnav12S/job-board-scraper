@@ -10,7 +10,7 @@ pg_database = os.getenv("PG_DATABASE")
 pg_port = os.getenv("PG_PORT")
 
 connection_string = (
-    f"postgresql://{pg_user}:{pg_password}@{pg_host}/{pg_database}?sslmode=require"
+    f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}?sslmode=require"
 )
 
 

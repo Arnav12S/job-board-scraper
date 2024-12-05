@@ -2,10 +2,8 @@ import asyncio
 import aiohttp
 from supabase import create_client, Client
 import os
-from langdetect import detect, LangDetectException
+from fast_langdetect import detect_language
 import logging
-import requests
-import xml.etree.ElementTree as ET
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
 # Configure logging
@@ -101,8 +99,9 @@ async def insert_jobs_to_supabase(jobs):
         # Detect language of the job description
         try:
             description = job.get("description", "")
-            language_iso = detect(description) if description else "unknown"
-        except LangDetectException:
+            language_iso = detect_language(description) if description else "unknown"
+        except Exception as e:
+            logging.error(f"Language detection failed: {e}")
             language_iso = "unknown"
 
         # Prepare job data for insertion
