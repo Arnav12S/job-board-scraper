@@ -18,8 +18,8 @@ def get_first_word(text):
 
 class LevergreenScrapyItem(scrapy.Item):
     id = scrapy.Field(output_processor=TakeFirst())
-    created_at = scrapy.Field(output_processor=TakeFirst())
-    updated_at = scrapy.Field(output_processor=TakeFirst())
+    #created_at = scrapy.Field(output_processor=TakeFirst())
+    #updated_at = scrapy.Field(output_processor=TakeFirst())
     source = scrapy.Field(output_processor=TakeFirst())
     run_hash = scrapy.Field(output_processor=TakeFirst())
     existing_html_used = scrapy.Field(output_processor=TakeFirst())

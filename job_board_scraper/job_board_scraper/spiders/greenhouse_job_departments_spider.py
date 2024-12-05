@@ -41,8 +41,8 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
         self.settings = get_project_settings()
         self.current_time = time.time()
         self.page_number = 1  # default
-        self.updated_at = int(self.current_time)
-        self.created_at = int(self.current_time)
+        #self.updated_at = int(self.current_time)
+        #self.created_at = int(self.current_time)
         self.current_date_utc = datetime.utcfromtimestamp(self.current_time).strftime(
             "%Y-%m-%d"
         )
@@ -160,7 +160,7 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
 
     def finalize_response(self, response):
         if self.html_file != "":
-            self.created_at = int(self.html_file["LastModified"].timestamp())
+            #self.created_at = int(self.html_file["LastModified"].timestamp())
             self.existing_html_used = True
             return self.html_file["Body"].read()
         else:
@@ -181,8 +181,8 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
         il.add_value("department_category", "level-0")
 
         il.add_value("id", self.determine_row_id(i))
-        il.add_value("created_at", self.created_at)
-        il.add_value("updated_at", self.updated_at)
+        #il.add_value("created_at", self.created_at)
+        #il.add_value("updated_at", self.updated_at)
 
         il.add_value("source", self.html_source)
         il.add_value("company_name", self.company_name)
@@ -266,8 +266,8 @@ class GreenhouseJobDepartmentsSpider(scrapy.Spider):
                 )
 
                 il.add_value("id", self.determine_row_id(i))
-                il.add_value("created_at", self.created_at)
-                il.add_value("updated_at", self.updated_at)
+                #il.add_value("created_at", self.created_at)
+                #il.add_value("updated_at", self.updated_at)
 
                 il.add_value("source", self.html_source)
                 il.add_value("company_name", self.company_name)

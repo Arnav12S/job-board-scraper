@@ -19,7 +19,14 @@ from job_board_scraper.utils.postgres_wrapper import PostgresWrapper
 from job_board_scraper.utils import general as util
 from job_board_scraper.utils.scraper_util import get_url_chunks
 from scrapy.utils.project import get_project_settings
-#import get_ashby_jobs
+import asyncio
+from job_board_scraper.get_ashby_jobs import main_with_hash as run_ashby_scraper
+from job_board_scraper.get_workable_jobs import main as run_workable_scraper
+from job_board_scraper.get_recruitee_jobs import main as run_recruitee_scraper
+from job_board_scraper.get_teamtailor_jobs import main as run_teamtailor_scraper
+from job_board_scraper.get_smartrecruiters_jobs import main as run_smartrecruiters_scraper
+from job_board_scraper.get_jobvite_jobs import main as run_jobvite_scraper
+from job_board_scraper.get_rippling_jobs import main as run_rippling_scraper
 
 logger = logging.getLogger("logger")
 run_hash = util.hash_ids.encode(int(time.time()))
@@ -27,40 +34,51 @@ run_hash = util.hash_ids.encode(int(time.time()))
 
 def run_spider(single_url_chunk, chunk_number):
     try:
-        # Create a settings object and set it to your project settings
-        settings = Settings()
-        settings.setmodule(my_settings)
-
-        process = CrawlerProcess(settings)
+        process = CrawlerProcess(get_project_settings())
         for i, careers_page_url in enumerate(single_url_chunk):
             logger.info(f"url = {careers_page_url}")
-            if careers_page_url.split(".")[1] == "greenhouse":
+            url_id = chunk_number * len(single_url_chunk) + i
+            
+            # Extract domain from URL
+            domain = careers_page_url.split(".")[1]
+            
+            if domain == "greenhouse":
                 process.crawl(
                     GreenhouseJobDepartmentsSpider,
                     careers_page_url=careers_page_url,
                     use_existing_html=False,
                     run_hash=run_hash,
-                    url_id=chunk_number * len(single_url_chunk) + i,
+                    url_id=url_id,
                 )
                 process.crawl(
                     GreenhouseJobsOutlineSpider,
                     careers_page_url=careers_page_url,
                     use_existing_html=False,
                     run_hash=run_hash,
-                    url_id=chunk_number * len(single_url_chunk) + i,
+                    url_id=url_id,
                 )
-            elif careers_page_url.split(".")[1] == "lever":
+            elif domain == "lever":
                 process.crawl(
                     LeverJobsOutlineSpider,
                     careers_page_url=careers_page_url,
                     use_existing_html=False,
                     run_hash=run_hash,
-                    url_id=chunk_number * len(single_url_chunk) + i,
+                    url_id=url_id,
                 )
-            #elif careers_page_url.split(".")[1] == "ashbyhq":
-                # Assuming get_ashby_jobs is a function you want to call
-                # You might need to import it at the top of your file
-                #get_ashby_jobs(careers_page_url=careers_page_url, run_hash=run_hash, url_id=chunk_number * len(single_url_chunk) + i)
+            elif domain == "ashby":
+                run_ashby_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "recruitee":
+                run_recruitee_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "teamtailor":
+                asyncio.run(run_teamtailor_scraper(careers_page_url, run_hash, url_id))
+            elif domain == "smartrecruiters":
+                run_smartrecruiters_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "jobvite":
+                run_jobvite_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "rippling":
+                run_rippling_scraper(careers_page_url, run_hash, url_id)
+            
+# Only start the process if there are crawlers added
         process.start()
     except Exception as e:
         logger.error(f"Error running spider for chunk {chunk_number}: {e}")

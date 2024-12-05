@@ -80,7 +80,7 @@ TELNETCONSOLE_PORT = None  # https://docs.scrapy.org/en/latest/topics/telnetcons
 # }
 
 # Configure item pipelines
-ITEM_PIPELINES = {"job_board_scraper.pipelines.JobScraperPipelinePostgres": 300}
+ITEM_PIPELINES = {"job_board_scraper.pipelines.JobScraperPipelinePostgres": 299}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

@@ -62,8 +62,8 @@ class GreenhouseJobsOutlineSpider(GreenhouseJobDepartmentsSpider):
             il.add_xpath("location", "//p[contains(@class, 'body--metadata')]/text()")
             
             il.add_value("id", self.determine_row_id(i * 1000 + j * 100 + self.page_number))
-            il.add_value("created_at", self.created_at)
-            il.add_value("updated_at", self.updated_at)
+            #il.add_value("created_at", self.created_at)
+            #il.add_value("updated_at", self.updated_at)
             il.add_value("source", self.html_source)
             il.add_value("run_hash", self.run_hash)
             il.add_value("raw_html_file_location", self.full_s3_html_path)
@@ -121,8 +121,8 @@ class GreenhouseJobsOutlineSpider(GreenhouseJobDepartmentsSpider):
                         il.add_xpath("location", "//span/text()")
                         
                         il.add_value("id", self.determine_row_id(i))
-                        il.add_value("created_at", self.created_at)
-                        il.add_value("updated_at", self.updated_at)
+                        #il.add_value("created_at", self.created_at)
+                        #il.add_value("updated_at", self.updated_at)
                         il.add_value("source", self.html_source)
                         il.add_value("run_hash", self.run_hash)
                         il.add_value("raw_html_file_location", self.full_s3_html_path)
