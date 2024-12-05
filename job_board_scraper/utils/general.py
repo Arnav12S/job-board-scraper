@@ -25,39 +25,40 @@ def setup_supabase_connection(job_board_provider):
         os.getenv("SUPABASE_KEY")
     )
 
-    result = supabase.rpc(
-        os.getenv("GET_BOARD_TOKENS_BASE_QUERY"),
-        {'provider': job_board_provider}
-    ).execute()
+    result = supabase.table('job_board_urls') \
+            .select('company_url') \
+            .eq('ats', job_board_provider) \
+            .eq('is_enabled', True) \
+            .execute()
 
-    board_tokens = [row['token'] for row in result.data]
-    return board_tokens
+    company_url = [row['company_url'] for row in result.data]
+    return company_url
 
 
 def create_dataframes_factory(
-    job_board_provider, jobs_outline_json, board_token, run_hash, source
+    job_board_provider, jobs_outline_json, company_url, run_hash, source
 ):
     if job_board_provider == "rippling":
         return create_rippling_dataframes(
-            jobs_outline_json, board_token, run_hash, source
+            jobs_outline_json, company_url, run_hash, source
         )
 
 
-def job_board_api_factory(board_token, job_board):
+def job_board_api_factory(company_url, job_board):
     if job_board == "rippling":
-        return call_rippling_job_board_api(board_token)
+        return call_rippling_job_board_api(company_url)
 
 
-def initial_error_check(board_token, job_board):
+def initial_error_check(company_url, job_board):
     try:
-        jobs_outline_json, source = job_board_api_factory(board_token, job_board)
+        jobs_outline_json, source = job_board_api_factory(company_url, job_board)
     except (KeyError, TypeError, JSONDecodeError, HTTPError):
-        logger.error(f"Bad Input for {board_token}")
+        logger.error(f"Bad Input for {company_url}")
         return True
 
     # No Jobs found
     if len(jobs_outline_json) == 0:
-        logger.warning(f"No Jobs found for {board_token}")
+        logger.warning(f"No Jobs found for {company_url}")
         return True
 
     return False

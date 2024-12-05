@@ -109,13 +109,26 @@ def fetch_all_careers_page_urls(supabase_client: Client) -> List[dict]:
 
     return all_urls
 
+def create_supabase_client():
+    try:
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_KEY")
+        
+        if not url or not key:
+            raise ValueError("SUPABASE_URL or SUPABASE_KEY environment variables are not set")
+            
+        client = create_client(url, key)
+        # Test the connection using an existing table
+        client.table("job_board_urls").select("*").limit(1).execute()
+        return client
+    except Exception as e:
+        logger.error(f"Failed to initialize Supabase client: {str(e)}")
+        raise
+
 if __name__ == "__main__":
     chunk_size = int(os.getenv("CHUNK_SIZE", 200))
 
-    supabase = create_client(
-        os.getenv("SUPABASE_URL"),
-        os.getenv("SUPABASE_KEY")
-    )
+    supabase = create_supabase_client()
     
     # Fetch careers page URLs using the new function
     careers_page_urls = fetch_all_careers_page_urls(supabase)

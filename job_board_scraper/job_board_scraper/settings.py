@@ -12,8 +12,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-print("RAW_HTML_S3_BUCKET:", os.getenv("RAW_HTML_S3_BUCKET"))
-
 # FEEDS = {"data.csv": {"format": "csv", "overwrite": True}}
 
 BOT_NAME = "job_board_scraper"
@@ -80,7 +78,8 @@ TELNETCONSOLE_PORT = None  # https://docs.scrapy.org/en/latest/topics/telnetcons
 # }
 
 # Configure item pipelines
-ITEM_PIPELINES = {"job_board_scraper.pipelines.JobScraperPipelinePostgres": 300}
+# See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+ITEM_PIPELINES = {"job_board_scraper.pipelines.JobScraperPipelinePostgres": 299}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
