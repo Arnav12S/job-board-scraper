@@ -7,11 +7,17 @@ logger = logging.getLogger("postgres_wrapper")
 
 class PostgresWrapper:
     _connection_pool = None
+    _pid = None
 
     @classmethod
     def initialize_pool(cls, minconn=1, maxconn=20):
-        if cls._connection_pool is None:
+        current_pid = os.getpid()
+        
+        if cls._connection_pool is None or cls._pid != current_pid:
             try:
+                if cls._connection_pool is not None:
+                    cls._connection_pool.closeall()
+                    
                 cls._connection_pool = pool.ThreadedConnectionPool(
                     minconn,
                     maxconn,
@@ -21,7 +27,8 @@ class PostgresWrapper:
                     dbname=os.environ.get("PG_DATABASE"),
                     port=os.environ.get("PG_PORT", "5432")
                 )
-                logger.info("PostgreSQL connection pool created successfully")
+                cls._pid = current_pid
+                logger.info(f"PostgreSQL connection pool created successfully for process {current_pid}")
             except Exception as e:
                 logger.error(f"Error creating connection pool: {e}")
                 raise
@@ -41,18 +48,25 @@ class PostgresWrapper:
 
     @classmethod
     def release_connection(cls, conn):
+        """Safely release a connection back to the pool"""
         try:
-            cls._connection_pool.putconn(conn)
-            logger.debug("Connection returned to pool")
+            if conn and cls._connection_pool:
+                cls._connection_pool.putconn(conn)
+                logger.debug("Released connection back to pool")
         except Exception as e:
-            logger.error(f"Error returning connection to pool: {e}")
-            raise
+            logger.error(f"Error releasing connection: {e}")
+            # If we can't return it to pool, try to close it
+            try:
+                conn.close()
+            except:
+                pass
 
     @classmethod
     def close_all_connections(cls):
         try:
-            cls._connection_pool.closeall()
-            logger.info("PostgreSQL connection pool closed")
+            if cls._connection_pool:
+                cls._connection_pool.closeall()
+                logger.info("PostgreSQL connection pool closed")
         except Exception as e:
             logger.error(f"Error closing connection pool: {e}")
             raise

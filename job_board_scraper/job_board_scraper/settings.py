@@ -29,6 +29,8 @@ DEFAULT_HTML = "https://blank.org"
 
 # Scrapy Logging
 LOG_LEVEL = "INFO"
+LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
+LOG_FILE = 'logs/scrapy.log'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'job_scraper (+http://www.yourdomain.com)'

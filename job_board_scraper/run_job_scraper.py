@@ -63,11 +63,9 @@ def get_careers_page_urls_for_ats(ats_name):
 
 
 def run_spider(single_url_chunk, chunk_number):
-    # Initialize connection pool once for this worker process
-    PostgresWrapper.initialize_pool()
-    
     try:
-        # Create a single CrawlerProcess for this chunk
+        PostgresWrapper.initialize_pool(minconn=1, maxconn=10)
+        
         process = CrawlerProcess(get_project_settings())
         
         for i, careers_page_url in enumerate(single_url_chunk):
@@ -75,7 +73,6 @@ def run_spider(single_url_chunk, chunk_number):
                 logger.info(f"Processing URL {careers_page_url}")
                 url_id = chunk_number * len(single_url_chunk) + i
                 
-                # Extract domain from URL
                 domain = careers_page_url.split(".")[1]
                 
                 if domain == "greenhouse":
@@ -101,7 +98,6 @@ def run_spider(single_url_chunk, chunk_number):
                         run_hash=run_hash,
                         url_id=url_id,
                     )
-                # For non-Scrapy scrapers, run them directly
                 elif domain == "ashby":
                     run_ashby_scraper(careers_page_url, run_hash, url_id)
                 elif domain == "recruitee":
@@ -119,14 +115,12 @@ def run_spider(single_url_chunk, chunk_number):
                 logger.error(f"Error processing URL {careers_page_url}: {str(e)}")
                 continue
         
-        # Start the process after adding all spiders for this chunk
         if process.crawlers:
             process.start()
             
     except Exception as e:
         logger.error(f"Error in chunk {chunk_number}: {str(e)}")
     finally:
-        # Clean up connections
         try:
             PostgresWrapper.close_all_connections()
             logger.info(f"Closed database connections for chunk {chunk_number}")

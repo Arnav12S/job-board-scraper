@@ -25,8 +25,11 @@ jobs:
       - name: Run dbt models
         run: |
           cd levergreen_dbt
-          dbt run > dbt_run.log 2>&1
-          cat dbt_run.log
+          mkdir -p logs
+          echo "Running dbt models..."
+          dbt run > logs/dbt_run.log 2>&1
+          echo "dbt models run completed with status $?"
+          cat logs/dbt_run.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -38,8 +41,8 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           cd levergreen_dbt
-          dbt docs generate --no-compile >> dbt_run.log 2>&1
-          cat dbt_run.log
+          dbt docs generate --no-compile >> logs/dbt_run.log 2>&1
+          cat logs/dbt_run.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -57,8 +60,8 @@ jobs:
       - name: Test dbt models
         run: |
           cd levergreen_dbt
-          dbt test >> dbt_run.log 2>&1
-          cat dbt_run.log
+          dbt test >> logs/dbt_run.log 2>&1
+          cat logs/dbt_run.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -69,8 +72,8 @@ jobs:
       - name: Check Freshness of dbt models
         run: |
           cd levergreen_dbt
-          dbt source freshness >> dbt_run.log 2>&1
-          cat dbt_run.log
+          dbt source freshness >> logs/dbt_run.log 2>&1
+          cat logs/dbt_run.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -83,7 +86,7 @@ jobs:
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git add levergreen_dbt/dbt_run.log
+          git add levergreen_dbt/logs/dbt_run.log
           git commit -m "Add dbt build and deploy logs"
           git push
         env:
