@@ -20,13 +20,12 @@ from job_board_scraper.utils import general as util
 from job_board_scraper.utils.scraper_util import get_url_chunks
 from scrapy.utils.project import get_project_settings
 import asyncio
-from job_board_scraper.get_ashby_jobs import main_with_hash as run_ashby_scraper
-from job_board_scraper.get_workable_jobs import main as run_workable_scraper
-from job_board_scraper.get_recruitee_jobs import main as run_recruitee_scraper
-from job_board_scraper.get_teamtailor_jobs import main as run_teamtailor_scraper
-from job_board_scraper.get_smartrecruiters_jobs import main as run_smartrecruiters_scraper
-from job_board_scraper.get_jobvite_jobs import main as run_jobvite_scraper
-from job_board_scraper.get_rippling_jobs import main as run_rippling_scraper
+from get_ashby_jobs import main_with_hash as run_ashby_scraper
+from get_workable_jobs import main as run_workable_scraper
+from get_recruitee_jobs import main as run_recruitee_scraper
+from get_teamtailor_jobs import main as run_teamtailor_scraper
+from get_smartrecruiters_jobs import main as run_smartrecruiters_scraper
+from get_jobvite_jobs import main_with_hash as run_jobvite_scraper
 
 logger = logging.getLogger("logger")
 run_hash = util.hash_ids.encode(int(time.time()))
@@ -75,8 +74,8 @@ def run_spider(single_url_chunk, chunk_number):
                 run_smartrecruiters_scraper(careers_page_url, run_hash, url_id)
             elif domain == "jobvite":
                 run_jobvite_scraper(careers_page_url, run_hash, url_id)
-            elif domain == "rippling":
-                run_rippling_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "workable":
+                run_workable_scraper(careers_page_url, run_hash, url_id)
             
 # Only start the process if there are crawlers added
         process.start()

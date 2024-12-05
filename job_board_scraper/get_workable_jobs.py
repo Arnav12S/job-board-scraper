@@ -53,10 +53,8 @@ async def fetch_jobs():
     
     # Clean up headers by removing any potential None values
     headers = {
-        "Authorization": f"Bearer {os.getenv('WORKABLE_API_TOKEN')}",
         "Accept": "*/*",
         "Sec-Fetch-Site": "same-origin",
-        "Cookie": os.getenv("WORKABLE_COOKIES") or "",  # Provide empty string fallback
         "Referer": "https://jobs.workable.com/search",
         "Sec-Fetch-Dest": "empty",
         "Sec-Fetch-Mode": "cors",
