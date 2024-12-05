@@ -5,11 +5,9 @@ import logging
 import time
 import os
 from supabase import create_client
-from dotenv import load_dotenv
 from job_board_scraper.utils import general as util
 from typing import List
 
-load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -112,8 +110,8 @@ def fetch_all_jobvite_urls(supabase):
 async def main_with_params(careers_page_urls: List[str], run_hash: str):
     try:
         supabase = create_client(
-            os.getenv("SUPABASE_URL"),
-            os.getenv("SUPABASE_KEY")
+            os.environ.get("SUPABASE_URL"),
+            os.environ.get("SUPABASE_KEY")
         )
         
         current_time = int(time.time())

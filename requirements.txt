@@ -21,5 +21,7 @@ asyncio==3.4.3
 supabase==2.10.0
 tenacity==9.0.0
 logging==0.4.9.6
-fast-langdetect==0.2.2
+fasttext-langdetect==1.0.5
 beautifulsoup4==4.12.3
+msgspec==0.18.6
+pandas==2.2.3

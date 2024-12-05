@@ -1,6 +1,5 @@
 import json
 import polars as pl
-import requests
 import logging
 import time
 import os
@@ -9,6 +8,8 @@ from msgspec import Struct
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from dataclasses import dataclass
+import aiohttp
+import asyncio
 
 from job_board_scraper.utils import general as util
 
@@ -180,7 +181,7 @@ def process_company_data(
 def determine_row_id(spider_id: int, url_id: int, row_id: int, created_at: int, k: int = 0) -> str:
     return util.hash_ids.encode(spider_id, url_id, row_id, created_at, k)
 
-def fetch_ashby_urls(connection_string: str) -> List[tuple]:
+async def fetch_ashby_urls(connection_string: str) -> List[tuple]:
     query = """
         SELECT company_url FROM job_board_urls 
         WHERE ats = 'ashbyhq' AND is_enabled = true
@@ -188,47 +189,67 @@ def fetch_ashby_urls(connection_string: str) -> List[tuple]:
     df = pl.read_database(query, connection_string)
     return df.rows()
 
-def main():
-    careers_page_urls = fetch_ashby_urls(connection_string)
+async def fetch_company_data(
+    session: aiohttp.ClientSession,
+    company_name: str,
+    query: str,
+    batch_processor: BatchProcessor,
+    run_hash: str,
+    url_index: int
+):
+    try:
+        async with session.post(
+            ASHBY_API_ENDPOINT,
+            headers={"Content-Type": "application/json"},
+            json={
+                "query": query,
+                "variables": {"organizationHostedJobsPageName": company_name}
+            }
+        ) as response:
+            response_data = await response.json()
+            
+            if not response_data.get("data", {}).get("jobBoard"):
+                logger.error(f"No data for {company_name}")
+                return
+                
+            jobs, departments, locations = process_company_data(
+                company_name,
+                response_data,
+                run_hash,
+                url_index
+            )
+            
+            batch_processor.add_records(jobs, departments, locations)
+            
+    except Exception as e:
+        logger.error(f"Failed to process {company_name}: {e}")
+
+async def main():
+    careers_page_urls = await fetch_ashby_urls(connection_string)
     batch_processor = BatchProcessor(connection_string)
     run_hash = util.hash_ids.encode(int(time.time()))
     
     with open(QUERY_PATH, 'r') as f:
         query = f.read()
 
-    for i, (ashby_url,) in enumerate(careers_page_urls):
-        company_name = ashby_url.split("/")[-1].replace("%20", " ")
-        
-        try:
-            response = requests.post(
-                ASHBY_API_ENDPOINT,
-                headers={"Content-Type": "application/json"},
-                json={
-                    "query": query,
-                    "variables": {"organizationHostedJobsPageName": company_name}
-                }
-            )
-            
-            response_data = response.json()
-            if not response_data.get("data", {}).get("jobBoard"):
-                logger.error(f"No data for {company_name}")
-                continue
-                
-            jobs, departments, locations = process_company_data(
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for i, (ashby_url,) in enumerate(careers_page_urls):
+            company_name = ashby_url.split("/")[-1].replace("%20", " ")
+            task = fetch_company_data(
+                session,
                 company_name,
-                response_data,
+                query,
+                batch_processor,
                 run_hash,
                 i
             )
+            tasks.append(task)
             
-            batch_processor.add_records(jobs, departments, locations)
-            
-        except Exception as e:
-            logger.error(f"Failed to process {company_name}: {e}")
-            continue
+        await asyncio.gather(*tasks)
     
     # Flush any remaining records
     batch_processor.flush()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
