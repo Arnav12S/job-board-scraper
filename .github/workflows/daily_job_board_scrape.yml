@@ -51,7 +51,7 @@ jobs:
           git config --global user.email 'action@github.com'
           git add job_board_scraper/run_job_scraper.log
           git commit -m "Add Scrapy script logs"
-          git push
+          git push -f
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 

@@ -88,7 +88,7 @@ jobs:
           git config --global user.email 'action@github.com'
           git add levergreen_dbt/logs/dbt_run.log
           git commit -m "Add dbt build and deploy logs"
-          git push
+          git push -f
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 

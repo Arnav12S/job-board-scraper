@@ -28,7 +28,7 @@ S3_HTML_PATH = "scrapy/{source}/{bot_name}/{partitions}/{file_name}"
 DEFAULT_HTML = "https://blank.org"
 
 # Scrapy Logging
-LOG_LEVEL = "INFO"
+LOG_LEVEL = "ERROR"
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 LOG_FILE = 'logs/scrapy.log'
 
