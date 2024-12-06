@@ -47,10 +47,11 @@ jobs:
         id: run_dbt_step
         run: |
           cd levergreen_dbt
+          mkdir -p logs
           echo "Running dbt models..."
-          dbt run > logs/dbt_run.log 2>&1
+          dbt run > logs/dbt_run_${GITHUB_RUN_NUMBER}.log 2>&1
           echo "dbt models run completed with status $?"
-          cat logs/dbt_run.log
+          cat logs/dbt_run_${GITHUB_RUN_NUMBER}.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -60,8 +61,8 @@ jobs:
       - name: Test dbt models
         run: |
           cd levergreen_dbt
-          dbt test >> logs/dbt_run.log 2>&1
-          cat logs/dbt_run.log
+          dbt test >> logs/dbt_run_${GITHUB_RUN_NUMBER}.log 2>&1
+          cat logs/dbt_run_${GITHUB_RUN_NUMBER}.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
@@ -72,8 +73,8 @@ jobs:
         if: ${{ always() && steps.run_dbt_step.conclusion == 'success'}}
         run: |
           cd levergreen_dbt
-          dbt source freshness >> logs/dbt_run.log 2>&1
-          cat logs/dbt_run.log
+          dbt source freshness >> logs/dbt_run_${GITHUB_RUN_NUMBER}.log 2>&1
+          cat logs/dbt_run_${GITHUB_RUN_NUMBER}.log
         env:
           PG_DATABASE: ${{ secrets.PG_DATABASE }}
           PG_HOST: ${{ secrets.PG_HOST }}
