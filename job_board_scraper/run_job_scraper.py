@@ -25,6 +25,7 @@ from get_recruitee_jobs import main as run_recruitee_scraper
 from get_teamtailor_jobs import main as run_teamtailor_scraper
 from get_smartrecruiters_jobs import main as run_smartrecruiters_scraper
 from get_jobvite_jobs import main_with_hash as run_jobvite_scraper
+from urllib.parse import urlparse
 
 logger = logging.getLogger("logger")
 run_hash = util.hash_ids.encode(int(time.time()))
@@ -53,6 +54,7 @@ def get_careers_page_urls_for_ats(ats_name):
         query = get_ats_query(ats_name)
         cursor.execute(query)
         careers_page_urls = cursor.fetchall()
+        logger.info(f"Found {len(careers_page_urls)} URLs for ATS: {ats_name}")
         return careers_page_urls
     except Exception as e:
         logger.error(f"Error fetching career page URLs for {ats_name}: {e}")
@@ -68,8 +70,33 @@ def run_spider(single_url_chunk, chunk_number):
         for i, careers_page_url in enumerate(single_url_chunk):
             logger.info(f"Processing URL: {careers_page_url}")
             url_id = chunk_number * len(single_url_chunk) + i
-            domain = careers_page_url.split(".")[1]
+            
+            # Improved domain extraction
+            parsed_url = urlparse(careers_page_url)
+            domain_parts = parsed_url.netloc.split('.')
+            
+            # Extract the main domain (e.g., greenhouse, lever, etc.)
+            if 'greenhouse' in parsed_url.netloc:
+                domain = 'greenhouse'
+            elif 'lever' in parsed_url.netloc:
+                domain = 'lever'
+            elif 'ashby' in parsed_url.netloc:
+                domain = 'ashby'
+            elif 'recruitee' in parsed_url.netloc:
+                domain = 'recruitee'
+            elif 'teamtailor' in parsed_url.netloc:
+                domain = 'teamtailor'
+            elif 'smartrecruiters' in parsed_url.netloc:
+                domain = 'smartrecruiters'
+            elif 'jobvite' in parsed_url.netloc:
+                domain = 'jobvite'
+            elif 'workable' in parsed_url.netloc:
+                domain = 'workable'
+            else:
+                logger.warning(f"Unknown domain for URL: {careers_page_url}")
+                continue
 
+            # Rest of your existing code for each domain...
             if domain == "greenhouse":
                 process.crawl(
                     GreenhouseJobDepartmentsSpider,
