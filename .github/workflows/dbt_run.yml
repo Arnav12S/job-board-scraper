@@ -106,8 +106,8 @@ jobs:
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git add levergreen_dbt/logs/dbt_run.log
-          git commit -m "Add dbt run logs"
+          git add -f levergreen_dbt/logs/dbt_run_${GITHUB_RUN_NUMBER}.log
+          git commit -m "Add dbt run logs for run ${GITHUB_RUN_NUMBER}"
           git push -f
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

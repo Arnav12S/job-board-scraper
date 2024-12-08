@@ -54,7 +54,7 @@ jobs:
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git add job_board_scraper/logs/run_job_scraper_${GITHUB_RUN_NUMBER}.log
+          git add -f job_board_scraper/logs/run_job_scraper_${GITHUB_RUN_NUMBER}.log
           git commit -m "Add Scrapy script logs for run ${GITHUB_RUN_NUMBER}"
           git push -f
         env:
