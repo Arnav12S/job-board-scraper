@@ -64,68 +64,55 @@ def get_careers_page_urls_for_ats(ats_name):
 
 def run_spider(single_url_chunk, chunk_number):
     try:
-        PostgresWrapper.initialize_pool(minconn=1, maxconn=10)
-        
         process = CrawlerProcess(get_project_settings())
-        
         for i, careers_page_url in enumerate(single_url_chunk):
-            try:
-                logger.info(f"Processing URL {careers_page_url}")
-                url_id = chunk_number * len(single_url_chunk) + i
-                
-                domain = careers_page_url.split(".")[1]
-                
-                if domain == "greenhouse":
-                    process.crawl(
-                        GreenhouseJobDepartmentsSpider,
-                        careers_page_url=careers_page_url,
-                        use_existing_html=False,
-                        run_hash=run_hash,
-                        url_id=url_id,
-                    )
-                    process.crawl(
-                        GreenhouseJobsOutlineSpider,
-                        careers_page_url=careers_page_url,
-                        use_existing_html=False,
-                        run_hash=run_hash,
-                        url_id=url_id,
-                    )
-                elif domain == "lever":
-                    process.crawl(
-                        LeverJobsOutlineSpider,
-                        careers_page_url=careers_page_url,
-                        use_existing_html=False,
-                        run_hash=run_hash,
-                        url_id=url_id,
-                    )
-                elif domain == "ashby":
-                    run_ashby_scraper(careers_page_url, run_hash, url_id)
-                elif domain == "recruitee":
-                    run_recruitee_scraper(careers_page_url, run_hash, url_id)
-                elif domain == "teamtailor":
-                    asyncio.run(run_teamtailor_scraper(careers_page_url, run_hash, url_id))
-                elif domain == "smartrecruiters":
-                    run_smartrecruiters_scraper(careers_page_url, run_hash, url_id)
-                elif domain == "jobvite":
-                    run_jobvite_scraper(careers_page_url, run_hash, url_id)
-                elif domain == "workable":
+            logger.info(f"Processing URL: {careers_page_url}")
+            url_id = chunk_number * len(single_url_chunk) + i
+            domain = careers_page_url.split(".")[1]
+
+            if domain == "greenhouse":
+                process.crawl(
+                    GreenhouseJobDepartmentsSpider,
+                    careers_page_url=careers_page_url,
+                    use_existing_html=False,
+                    run_hash=run_hash,
+                    url_id=url_id,
+                )
+                process.crawl(
+                    GreenhouseJobsOutlineSpider,
+                    careers_page_url=careers_page_url,
+                    use_existing_html=False,
+                    run_hash=run_hash,
+                    url_id=url_id,
+                )
+            elif domain == "lever":
+                process.crawl(
+                    LeverJobsOutlineSpider,
+                    careers_page_url=careers_page_url,
+                    use_existing_html=False,
+                    run_hash=run_hash,
+                    url_id=url_id,
+                )
+            elif domain == "ashby":
+                run_ashby_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "recruitee":
+                run_recruitee_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "teamtailor":
+                asyncio.run(run_teamtailor_scraper(careers_page_url, run_hash, url_id))
+            elif domain == "smartrecruiters":
+                run_smartrecruiters_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "jobvite":
+                run_jobvite_scraper(careers_page_url, run_hash, url_id)
+            elif domain == "workable":
                     run_workable_scraper(careers_page_url, run_hash, url_id)
-                    
-            except Exception as e:
-                logger.error(f"Error processing URL {careers_page_url}: {str(e)}")
-                continue
-        
+
         if process.crawlers:
+            logger.info("Starting crawler process")
             process.start()
-            
+        else:
+            logger.warning("No crawlers to start")
     except Exception as e:
-        logger.error(f"Error in chunk {chunk_number}: {str(e)}")
-    finally:
-        try:
-            PostgresWrapper.close_all_connections()
-            logger.info(f"Closed database connections for chunk {chunk_number}")
-        except Exception as e:
-            logger.error(f"Error closing connections for chunk {chunk_number}: {str(e)}")
+        logger.error(f"Error in run_spider: {str(e)}")
 
 
 if __name__ == "__main__":
