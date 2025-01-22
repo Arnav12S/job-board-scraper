@@ -1,0 +1,13 @@
+[0m08:05:21  Running with dbt=1.8.9
+[0m08:05:22  Registered adapter: postgres=1.8.2
+[0m08:05:22  Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m08:05:25  Encountered an error:
+Compilation Error
+  dbt found two models with the name "all_job_postings".
+  
+  Since these resources have the same name, dbt will be unable to find the correct resource
+  when looking for ref("all_job_postings").
+  
+  To fix this, change the name of one of these resources:
+  - model.levergreen_dbt.all_job_postings (models/marts/all_job_postings.sql)
+  - model.levergreen_dbt.all_job_postings (models/core/all_job_postings.sql)
