@@ -61,7 +61,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Upload Scrapy Logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scrapy-logs
           path: job_board_scraper/logs/run_job_scraper_${GITHUB_RUN_NUMBER}.log
@@ -71,10 +71,10 @@ jobs:
     needs: [run_script]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -85,6 +85,22 @@ jobs:
 
       - name: Install dbt dependencies
         run: cd levergreen_dbt && dbt deps
+
+      - name: Set up dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          echo "levergreen_dbt:" > ~/.dbt/profiles.yml
+          echo "  outputs:" >> ~/.dbt/profiles.yml
+          echo "    prod:" >> ~/.dbt/profiles.yml
+          echo "      type: postgres" >> ~/.dbt/profiles.yml
+          echo "      host: ${{ secrets.PG_HOST }}" >> ~/.dbt/profiles.yml
+          echo "      port: 5432" >> ~/.dbt/profiles.yml
+          echo "      user: ${{ secrets.PG_USER }}" >> ~/.dbt/profiles.yml
+          echo "      pass: ${{ secrets.PG_PASSWORD }}" >> ~/.dbt/profiles.yml
+          echo "      dbname: ${{ secrets.PG_DATABASE }}" >> ~/.dbt/profiles.yml
+          echo "      schema: public" >> ~/.dbt/profiles.yml
+          echo "      threads: 4" >> ~/.dbt/profiles.yml
+          echo "  target: prod" >> ~/.dbt/profiles.yml
 
       - name: Build dbt models
         run: cd levergreen_dbt && dbt run

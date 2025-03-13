@@ -7,7 +7,7 @@ from supabase import create_client, Client
 import time
 
 # Enable logging
-logging.basicConfig(level=logging.DEBUG)
+
 # Supabase setup
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
@@ -34,7 +34,7 @@ df.columns = df.columns.str.lower()
 # Define allowed ATS types including 'unknown'
 allowed_ats = [
     'greenhouse', 'lever', 'ashbyhq', 'workable', 
-    'recruitee', 'jobvite', 'smartrecruiters', 'teamtailor', 'unknown'
+    'recruitee', 'jobvite', 'smartrecruiters', 'teamtailor', 'personio', 'unknown'
 ]
 df = df[df['ats'].str.lower().isin(allowed_ats)]
 
@@ -57,6 +57,24 @@ UNWANTED_PATHS = [
     'connect', 'people', 'locations', 'pages', 'request_removal', 'data_request',
     'auth', 'faq', 'faqs', 'marketing', 'dev', 'api', 'app', 'track'
 ]
+
+# Configure logging to be less verbose
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Disable verbose HTTP debug logging
+logging.getLogger('httpx').setLevel(logging.WARNING)
+logging.getLogger('httpcore').setLevel(logging.WARNING)
+logging.getLogger('hpack').setLevel(logging.WARNING)
+
+# After reading CSV, log initial count
+initial_count = len(df)
+logging.info(f"Initial records from CSV: {initial_count}")
+logging.info("Initial ATS distribution:")
+for ats, count in df['ats'].str.lower().value_counts().items():
+    logging.info(f"- {ats}: {count} records")
 
 # Function to categorize unknown ATS based on URL
 def categorize_unknown_ats(row):
@@ -85,7 +103,8 @@ def categorize_unknown_ats(row):
         'recruitee': r'\.recruitee\.com$',
         'jobvite': r'\.jobvite\.com$',
         'smartrecruiters': r'\.smartrecruiters\.com$',
-        'teamtailor': r'\.teamtailor\.com$'
+        'teamtailor': r'\.teamtailor\.com$',
+        'personio': r'\.personio\.com$'
     }
     
     for ats, pattern in ats_patterns.items():
@@ -184,6 +203,13 @@ def clean_url(url, ats):
             # If no specific path, default to /jobs
             return f"https://{company}.teamtailor.com/jobs"
     
+    elif ats == 'personio':
+        if netloc.endswith('.personio.com'):
+            company = netloc.split('.')[0]
+            if company:
+                return f"https://{company}.jobs.personio.com"
+        return None
+    
     elif ats == 'unknown':
         # Attempt to categorize based on existing ATS patterns
         # If still unknown, skip the URL
@@ -194,10 +220,27 @@ def clean_url(url, ats):
 
 # Apply the clean_url function and filter out None values
 df['company_url'] = df.apply(lambda row: clean_url(row['company url'], row['ats'].lower()), axis=1)
-df = df.dropna(subset=['company_url'])
+cleaned_count = len(df)
+removed_count = initial_count - cleaned_count
+logging.info(f"Records removed during URL cleaning: {removed_count}")
 
 # Drop duplicates based on 'company_url'
+df = df.dropna(subset=['company_url'])
 df = df.drop_duplicates(subset='company_url')
+deduped_count = len(df)
+dupes_removed = cleaned_count - deduped_count
+logging.info(f"Duplicate records removed: {dupes_removed}")
+
+# Log final preprocessing stats
+logging.info("\nFinal preprocessing statistics:")
+logging.info(f"Initial records: {initial_count}")
+logging.info(f"Records after cleaning: {cleaned_count}")
+logging.info(f"Records after deduplication: {deduped_count}")
+logging.info(f"Total records removed: {initial_count - deduped_count}")
+
+logging.info("\nFinal ATS distribution:")
+for ats, count in df['ats'].str.lower().value_counts().items():
+    logging.info(f"- {ats}: {count} records")
 
 # Define ATS types that are enabled
 enabled_ats = ['greenhouse', 'lever', 'ashbyhq', 'workable', 'jobvite', 'smartrecruiters', 'recruitee', 'teamtailor']
@@ -226,6 +269,9 @@ def extract_company_name(row):
         if ats in ['recruitee', 'teamtailor']:
             # Extract company name from subdomain
             return clean_url.split('.')[0]
+        elif ats == 'personio':
+            # Extract company name from subdomain for personio
+            return clean_url.split('.')[0]
         else:
             # Extract company name from the first part of the URL path
             path_parts = clean_url.split('/')
@@ -239,29 +285,31 @@ df['company'] = df.apply(extract_company_name, axis=1)
 def batch_upsert(records, batch_size=100):
     total_records = len(records)
     successful_upserts = 0
+    failed_upserts = 0
     
     for i in range(0, total_records, batch_size):
         batch = records[i:i + batch_size]
         try:
-            # Use upsert with on_conflict parameter to handle duplicates
             response = supabase.table('job_board_urls').upsert(
                 batch,
-                on_conflict='company_url'  # Specify the unique constraint column
+                on_conflict='company_url'
             ).execute()
             
             successful_upserts += len(batch)
-            print(f"Processed {successful_upserts}/{total_records} records")
+            # Log every 1000 records or at the end
+            if successful_upserts % 1000 == 0 or successful_upserts == total_records:
+                logging.info(f"Progress: {successful_upserts}/{total_records} records processed ({(successful_upserts/total_records)*100:.1f}%)")
             
-            # Add a small delay between batches to prevent rate limiting
             time.sleep(0.5)
             
         except Exception as e:
-            logging.error(f"Error processing batch {i//batch_size + 1}: {e}")
+            failed_upserts += len(batch)
+            logging.error(f"Error processing batch {i//batch_size + 1}: {str(e)}")
             continue
 
-    return successful_upserts
+    return successful_upserts, failed_upserts
 
 # Convert DataFrame to records and process
 records = df.to_dict('records')
-successful_upserts = batch_upsert(records)
+successful_upserts, failed_upserts = batch_upsert(records)
 print(f"Successfully upserted {successful_upserts} records to Supabase!")
