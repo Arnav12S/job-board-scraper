@@ -1,19 +1,26 @@
 with workable_jobs as (
     select * from {{ ref('stg_workable_jobs') }}
-),
+)
 
-jobvite_jobs as (
-    select * from {{ ref('stg_jobvite_jobs') }}
+-- Keeping these commented out for future implementation
+/*
+, jobvite_jobs as (
+    select * from 'stg_jobvite_jobs'
 ),
 
 recruitee_jobs as (
-    select * from {{ ref('stg_recruitee_jobs') }}
+    select * from 'stg_recruitee_jobs'
 ),
 
 smartrecruiters_jobs as (
-    select * from {{ ref('stg_smartrecruiters_jobs') }}
+    select * from 'stg_smartrecruiters_jobs'
 ),
+*/
 
+select * from workable_jobs
+
+-- When the other models are implemented, use this:
+/*
 combined_jobs as (
     select * from workable_jobs
     union all
@@ -24,4 +31,5 @@ combined_jobs as (
     select * from smartrecruiters_jobs
 )
 
-select * from combined_jobs 
+select * from combined_jobs
+*/ 
