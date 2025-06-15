@@ -1,0 +1,159 @@
+[0m08:04:08  Running with dbt=1.8.9
+[0m08:04:08  Registered adapter: postgres=1.8.2
+[0m08:04:08  Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m08:04:12  [[33mWARNING[0m]: Deprecated functionality
+The `tests` config has been renamed to `data_tests`. Please see
+https://docs.getdbt.com/docs/build/data-tests#new-data_tests-syntax for more
+information.
+[0m08:04:13  Found 47 models, 123 data tests, 2 operations, 12 sources, 1504 macros
+[0m08:04:13  
+[0m08:04:17  
+[0m08:04:17  Running 1 on-run-start hook
+[0m08:04:17  1 of 1 START hook: elementary.on-run-start.0 ................................... [RUN]
+[0m08:04:17  1 of 1 OK hook: elementary.on-run-start.0 ...................................... [[32mOK[0m in 0.00s]
+[0m08:04:17  
+[0m08:04:17  Concurrency: 4 threads (target='prod')
+[0m08:04:17  
+[0m08:04:17  1 of 47 START sql incremental model elementary.data_monitoring_metrics ......... [RUN]
+[0m08:04:17  2 of 47 START sql incremental model elementary.dbt_columns ..................... [RUN]
+[0m08:04:17  3 of 47 START sql incremental model elementary.dbt_exposures ................... [RUN]
+[0m08:04:17  4 of 47 START sql incremental model elementary.dbt_invocations ................. [RUN]
+[0m08:04:19  1 of 47 OK created sql incremental model elementary.data_monitoring_metrics .... [[32mINSERT 0 0[0m in 1.99s]
+[0m08:04:19  5 of 47 START sql incremental model elementary.dbt_metrics ..................... [RUN]
+[0m08:04:19  4 of 47 OK created sql incremental model elementary.dbt_invocations ............ [[32mINSERT 0 0[0m in 2.01s]
+[0m08:04:19  6 of 47 START sql incremental model elementary.dbt_models ...................... [RUN]
+[0m08:04:19  3 of 47 OK created sql incremental model elementary.dbt_exposures .............. [[32mINSERT 0 0[0m in 2.35s]
+[0m08:04:19  7 of 47 START sql incremental model elementary.dbt_run_results ................. [RUN]
+[0m08:04:19  2 of 47 OK created sql incremental model elementary.dbt_columns ................ [[32mINSERT 0 0[0m in 2.54s]
+[0m08:04:19  8 of 47 START sql incremental model elementary.dbt_seeds ....................... [RUN]
+[0m08:04:21  5 of 47 OK created sql incremental model elementary.dbt_metrics ................ [[32mINSERT 0 0[0m in 1.89s]
+[0m08:04:21  9 of 47 START sql incremental model elementary.dbt_snapshots ................... [RUN]
+[0m08:04:21  7 of 47 OK created sql incremental model elementary.dbt_run_results ............ [[32mINSERT 0 0[0m in 1.65s]
+[0m08:04:21  10 of 47 START sql incremental model elementary.dbt_source_freshness_results ... [RUN]
+[0m08:04:21  6 of 47 OK created sql incremental model elementary.dbt_models ................. [[32mINSERT 0 0[0m in 1.95s]
+[0m08:04:21  11 of 47 START sql incremental model elementary.dbt_sources .................... [RUN]
+[0m08:04:21  8 of 47 OK created sql incremental model elementary.dbt_seeds .................. [[32mINSERT 0 0[0m in 1.67s]
+[0m08:04:21  12 of 47 START sql incremental model elementary.dbt_tests ...................... [RUN]
+[0m08:04:22  10 of 47 OK created sql incremental model elementary.dbt_source_freshness_results  [[32mINSERT 0 0[0m in 1.57s]
+[0m08:04:22  13 of 47 START sql incremental model elementary.elementary_test_results ........ [RUN]
+[0m08:04:22  9 of 47 OK created sql incremental model elementary.dbt_snapshots .............. [[32mINSERT 0 0[0m in 1.68s]
+[0m08:04:22  14 of 47 START sql table model elementary.metadata ............................. [RUN]
+[0m08:04:23  11 of 47 OK created sql incremental model elementary.dbt_sources ............... [[32mINSERT 0 0[0m in 1.73s]
+[0m08:04:23  15 of 47 START sql incremental model elementary.schema_columns_snapshot ........ [RUN]
+[0m08:04:23  12 of 47 OK created sql incremental model elementary.dbt_tests ................. [[32mINSERT 0 0[0m in 2.11s]
+[0m08:04:23  16 of 47 START sql view model public.stg_ashby__job_departments ................ [RUN]
+[0m08:04:24  14 of 47 OK created sql table model elementary.metadata ........................ [[32mSELECT 1[0m in 1.43s]
+[0m08:04:24  17 of 47 START sql view model public.stg_ashby__job_locations .................. [RUN]
+[0m08:04:24  13 of 47 OK created sql incremental model elementary.elementary_test_results ... [[32mINSERT 0 0[0m in 1.54s]
+[0m08:04:24  18 of 47 START sql view model public.stg_ashby__jobs_outline ................... [RUN]
+[0m08:04:24  16 of 47 ERROR creating sql view model public.stg_ashby__job_departments ....... [[31mERROR[0m in 1.07s]
+[0m08:04:24  19 of 47 START sql view model public.stg_greenhouse__job_departments ........... [RUN]
+[0m08:04:24  15 of 47 OK created sql incremental model elementary.schema_columns_snapshot ... [[32mINSERT 0 0[0m in 1.59s]
+[0m08:04:24  20 of 47 START sql view model public.stg_greenhouse__jobs_outline .............. [RUN]
+[0m08:04:25  17 of 47 ERROR creating sql view model public.stg_ashby__job_locations ......... [[31mERROR[0m in 0.97s]
+[0m08:04:25  21 of 47 START sql view model public.stg_lever__jobs_outline ................... [RUN]
+[0m08:04:25  18 of 47 ERROR creating sql view model public.stg_ashby__jobs_outline .......... [[31mERROR[0m in 0.97s]
+[0m08:04:25  22 of 47 START sql view model public.stg_rippling__jobs_outline ................ [RUN]
+[0m08:04:25  19 of 47 ERROR creating sql view model public.stg_greenhouse__job_departments .. [[31mERROR[0m in 0.99s]
+[0m08:04:25  23 of 47 START sql view model public.stg_workable_jobs ......................... [RUN]
+[0m08:04:25  20 of 47 ERROR creating sql view model public.stg_greenhouse__jobs_outline ..... [[31mERROR[0m in 0.99s]
+[0m08:04:25  24 of 47 START sql view model elementary.metrics_anomaly_score ................. [RUN]
+[0m08:04:26  21 of 47 ERROR creating sql view model public.stg_lever__jobs_outline .......... [[31mERROR[0m in 0.97s]
+[0m08:04:26  25 of 47 START sql view model elementary.monitors_runs ......................... [RUN]
+[0m08:04:26  23 of 47 ERROR creating sql view model public.stg_workable_jobs ................ [[31mERROR[0m in 0.99s]
+[0m08:04:26  26 of 47 START sql view model elementary.job_run_results ....................... [RUN]
+[0m08:04:26  22 of 47 OK created sql view model public.stg_rippling__jobs_outline ........... [[32mCREATE VIEW[0m in 1.35s]
+[0m08:04:26  27 of 47 START sql view model elementary.model_run_results ..................... [RUN]
+[0m08:04:26  24 of 47 OK created sql view model elementary.metrics_anomaly_score ............ [[32mCREATE VIEW[0m in 1.27s]
+[0m08:04:26  28 of 47 START sql view model elementary.seed_run_results ...................... [RUN]
+[0m08:04:27  25 of 47 OK created sql view model elementary.monitors_runs .................... [[32mCREATE VIEW[0m in 1.30s]
+[0m08:04:27  29 of 47 START sql view model elementary.snapshot_run_results .................. [RUN]
+[0m08:04:27  26 of 47 OK created sql view model elementary.job_run_results .................. [[32mCREATE VIEW[0m in 1.35s]
+[0m08:04:27  30 of 47 START sql view model elementary.alerts_dbt_source_freshness ........... [RUN]
+[0m08:04:28  27 of 47 OK created sql view model elementary.model_run_results ................ [[32mCREATE VIEW[0m in 1.39s]
+[0m08:04:28  31 of 47 START sql view model elementary.dbt_artifacts_hashes .................. [RUN]
+[0m08:04:28  28 of 47 OK created sql view model elementary.seed_run_results ................. [[32mCREATE VIEW[0m in 1.31s]
+[0m08:04:28  32 of 47 START sql view model elementary.alerts_anomaly_detection .............. [RUN]
+[0m08:04:28  29 of 47 OK created sql view model elementary.snapshot_run_results ............. [[32mCREATE VIEW[0m in 1.32s]
+[0m08:04:28  33 of 47 START sql view model elementary.alerts_dbt_tests ...................... [RUN]
+[0m08:04:29  30 of 47 OK created sql view model elementary.alerts_dbt_source_freshness ...... [[32mCREATE VIEW[0m in 1.33s]
+[0m08:04:29  34 of 47 START sql view model elementary.alerts_schema_changes ................. [RUN]
+[0m08:04:29  31 of 47 OK created sql view model elementary.dbt_artifacts_hashes ............. [[32mCREATE VIEW[0m in 1.24s]
+[0m08:04:29  35 of 47 START sql incremental model elementary.test_result_rows ............... [RUN]
+[0m08:04:29  32 of 47 OK created sql view model elementary.alerts_anomaly_detection ......... [[32mCREATE VIEW[0m in 1.34s]
+[0m08:04:29  36 of 47 SKIP relation public.int_ashby_departments_expanded ................... [[33mSKIP[0m]
+[0m08:04:29  37 of 47 SKIP relation public.int_ashby_locations_expanded ..................... [[33mSKIP[0m]
+[0m08:04:29  38 of 47 SKIP relation public.int_greenhouse_departments_expanded_with_outline . [[33mSKIP[0m]
+[0m08:04:29  39 of 47 SKIP relation public.int_lever_departments_expanded ................... [[33mSKIP[0m]
+[0m08:04:29  40 of 47 SKIP relation public.combined_job_sources ............................. [[33mSKIP[0m]
+[0m08:04:29  41 of 47 START sql view model elementary.anomaly_threshold_sensitivity ......... [RUN]
+[0m08:04:30  33 of 47 OK created sql view model elementary.alerts_dbt_tests ................. [[32mCREATE VIEW[0m in 1.30s]
+[0m08:04:30  42 of 47 START sql view model elementary.alerts_dbt_models ..................... [RUN]
+[0m08:04:30  34 of 47 OK created sql view model elementary.alerts_schema_changes ............ [[32mCREATE VIEW[0m in 1.32s]
+[0m08:04:30  43 of 47 SKIP relation public.int_ashby_outline_finalized ...................... [[33mSKIP[0m]
+[0m08:04:30  44 of 47 SKIP relation core.all_job_postings ................................... [[33mSKIP[0m]
+[0m08:04:30  45 of 47 SKIP relation core.active_job_postings ................................ [[33mSKIP[0m]
+[0m08:04:30  46 of 47 SKIP relation core.active_job_postings_default ........................ [[33mSKIP[0m]
+[0m08:04:30  47 of 47 SKIP relation core.active_job_postings_prospect ....................... [[33mSKIP[0m]
+[0m08:04:30  41 of 47 OK created sql view model elementary.anomaly_threshold_sensitivity .... [[32mCREATE VIEW[0m in 1.20s]
+[0m08:04:30  35 of 47 OK created sql incremental model elementary.test_result_rows .......... [[32mINSERT 0 0[0m in 1.60s]
+[0m08:04:31  42 of 47 OK created sql view model elementary.alerts_dbt_models ................ [[32mCREATE VIEW[0m in 1.24s]
+[0m08:04:32  
+[0m08:04:32  Running 1 on-run-end hook
+[0m08:04:34  1 of 1 START hook: elementary.on-run-end.0 ..................................... [RUN]
+[0m08:04:34  1 of 1 OK hook: elementary.on-run-end.0 ........................................ [[32mOK[0m in 0.00s]
+[0m08:04:34  
+[0m08:04:34  
+[0m08:04:34  Finished running 15 incremental models, 10 table models, 22 view models, 2 project hooks in 0 hours 0 minutes and 20.49 seconds (20.49s).
+[0m08:04:34  
+[0m08:04:34  [31mCompleted with 7 errors and 0 warnings:[0m
+[0m08:04:34  
+[0m08:04:34    Database Error in model stg_ashby__job_departments (models/staging/ashby/stg_ashby__job_departments.sql)
+  function to_timestamp(timestamp with time zone) does not exist
+  LINE 10:         to_timestamp(created_at) at time zone 'UTC' as creat...
+                   ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  compiled code at target/run/levergreen_dbt/models/staging/ashby/stg_ashby__job_departments.sql
+[0m08:04:34  
+[0m08:04:34    Database Error in model stg_ashby__job_locations (models/staging/ashby/stg_ashby__job_locations.sql)
+  function to_timestamp(timestamp with time zone) does not exist
+  LINE 10:         to_timestamp(created_at) at time zone 'UTC' as creat...
+                   ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  compiled code at target/run/levergreen_dbt/models/staging/ashby/stg_ashby__job_locations.sql
+[0m08:04:34  
+[0m08:04:34    Database Error in model stg_ashby__jobs_outline (models/staging/ashby/stg_ashby__jobs_outline.sql)
+  function to_timestamp(timestamp with time zone) does not exist
+  LINE 10:         to_timestamp(created_at) at time zone 'UTC' as creat...
+                   ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  compiled code at target/run/levergreen_dbt/models/staging/ashby/stg_ashby__jobs_outline.sql
+[0m08:04:34  
+[0m08:04:34    Database Error in model stg_greenhouse__job_departments (models/staging/greenhouse/stg_greenhouse__job_departments.sql)
+  function to_timestamp(timestamp with time zone) does not exist
+  LINE 10:         to_timestamp(created_at) at time zone 'UTC' as creat...
+                   ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  compiled code at target/run/levergreen_dbt/models/staging/greenhouse/stg_greenhouse__job_departments.sql
+[0m08:04:34  
+[0m08:04:34    Database Error in model stg_greenhouse__jobs_outline (models/staging/greenhouse/stg_greenhouse__jobs_outline.sql)
+  function to_timestamp(timestamp with time zone) does not exist
+  LINE 12:         to_timestamp(created_at) at time zone 'UTC' as creat...
+                   ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  compiled code at target/run/levergreen_dbt/models/staging/greenhouse/stg_greenhouse__jobs_outline.sql
+[0m08:04:34  
+[0m08:04:34    Database Error in model stg_lever__jobs_outline (models/staging/lever/stg_lever__jobs_outline.sql)
+  function to_timestamp(timestamp with time zone) does not exist
+  LINE 10:         to_timestamp(created_at) at time zone 'UTC' as creat...
+                   ^
+  HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+  compiled code at target/run/levergreen_dbt/models/staging/lever/stg_lever__jobs_outline.sql
+[0m08:04:34  
+[0m08:04:34    Database Error in model stg_workable_jobs (models/staging/stg_workable_jobs.sql)
+  cross-database references are not implemented: "your_database.public.workable_jobs"
+  LINE 9:     from "your_database"."public"."workable_jobs"
+                   ^
+  compiled code at target/run/levergreen_dbt/models/staging/stg_workable_jobs.sql
+[0m08:04:34  
+[0m08:04:34  Done. PASS=30 WARN=0 ERROR=7 SKIP=10 TOTAL=47
