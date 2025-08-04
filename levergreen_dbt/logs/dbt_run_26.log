@@ -1,13 +1,17 @@
-[0m08:04:03  Running with dbt=1.8.9
-[0m08:04:03  Registered adapter: postgres=1.8.2
-[0m08:04:04  Unable to do partial parsing because saved manifest not found. Starting full parse.
-[0m08:04:06  Encountered an error:
-Compilation Error
-  dbt found two models with the name "all_job_postings".
+[0m14:08:01  Running with dbt=1.8.9
+[0m14:08:01  Registered adapter: postgres=1.8.2
+[0m14:08:02  Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m14:08:06  [[33mWARNING[0m]: Deprecated functionality
+The `tests` config has been renamed to `data_tests`. Please see
+https://docs.getdbt.com/docs/build/data-tests#new-data_tests-syntax for more
+information.
+[0m14:08:07  Found 48 models, 123 data tests, 2 operations, 12 sources, 1570 macros
+[0m14:08:07  
+[0m14:09:07  
+[0m14:09:07  Finished running  in 0 hours 1 minutes and 0.21 seconds (60.21s).
+[0m14:09:07  Encountered an error:
+Database Error
+  connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 5432 failed: timeout expired
+  connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 5432 failed: timeout expired
+  connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 5432 failed: timeout expired
   
-  Since these resources have the same name, dbt will be unable to find the correct resource
-  when looking for ref("all_job_postings").
-  
-  To fix this, change the name of one of these resources:
-  - model.levergreen_dbt.all_job_postings (models/marts/all_job_postings.sql)
-  - model.levergreen_dbt.all_job_postings (models/core/all_job_postings.sql)
