@@ -31,17 +31,40 @@ jobs:
       - name: Set up dbt profile
         run: |
           mkdir -p ~/.dbt
-          echo "elementary:" > ~/.dbt/profiles.yml
+          echo "levergreen_dbt:" > ~/.dbt/profiles.yml
           echo "  outputs:" >> ~/.dbt/profiles.yml
           echo "    dev:" >> ~/.dbt/profiles.yml
           echo "      type: postgres" >> ~/.dbt/profiles.yml
           echo "      host: ${{ secrets.PG_HOST }}" >> ~/.dbt/profiles.yml
+          echo "      port: ${{ secrets.PG_PORT }}" >> ~/.dbt/profiles.yml
           echo "      user: ${{ secrets.PG_USER }}" >> ~/.dbt/profiles.yml
-          echo "      password: ${{ secrets.PG_PASSWORD }}" >> ~/.dbt/profiles.yml
+          echo "      pass: ${{ secrets.PG_PASSWORD }}" >> ~/.dbt/profiles.yml
           echo "      dbname: ${{ secrets.PG_DATABASE }}" >> ~/.dbt/profiles.yml
           echo "      schema: public" >> ~/.dbt/profiles.yml
-          echo "      threads: 1" >> ~/.dbt/profiles.yml
-          echo "  target: dev" >> ~/.dbt/profiles.yml
+          echo "      threads: 4" >> ~/.dbt/profiles.yml
+          echo "    prod:" >> ~/.dbt/profiles.yml
+          echo "      type: postgres" >> ~/.dbt/profiles.yml
+          echo "      host: ${{ secrets.PG_HOST }}" >> ~/.dbt/profiles.yml
+          echo "      port: ${{ secrets.PG_PORT }}" >> ~/.dbt/profiles.yml
+          echo "      user: ${{ secrets.PG_USER }}" >> ~/.dbt/profiles.yml
+          echo "      pass: ${{ secrets.PG_PASSWORD }}" >> ~/.dbt/profiles.yml
+          echo "      dbname: ${{ secrets.PG_DATABASE }}" >> ~/.dbt/profiles.yml
+          echo "      schema: public" >> ~/.dbt/profiles.yml
+          echo "      threads: 4" >> ~/.dbt/profiles.yml
+          echo "  target: prod" >> ~/.dbt/profiles.yml
+          echo "" >> ~/.dbt/profiles.yml
+          echo "elementary:" >> ~/.dbt/profiles.yml
+          echo "  outputs:" >> ~/.dbt/profiles.yml
+          echo "    default:" >> ~/.dbt/profiles.yml
+          echo "      type: postgres" >> ~/.dbt/profiles.yml
+          echo "      host: ${{ secrets.PG_HOST }}" >> ~/.dbt/profiles.yml
+          echo "      port: ${{ secrets.PG_PORT }}" >> ~/.dbt/profiles.yml
+          echo "      user: ${{ secrets.PG_USER }}" >> ~/.dbt/profiles.yml
+          echo "      pass: ${{ secrets.PG_PASSWORD }}" >> ~/.dbt/profiles.yml
+          echo "      dbname: ${{ secrets.PG_DATABASE }}" >> ~/.dbt/profiles.yml
+          echo "      schema: elementary" >> ~/.dbt/profiles.yml
+          echo "      threads: 4" >> ~/.dbt/profiles.yml
+          echo "  target: default" >> ~/.dbt/profiles.yml
 
       - name: Run dbt models
         id: run_dbt_step
@@ -57,6 +80,7 @@ jobs:
           PG_HOST: ${{ secrets.PG_HOST }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           PG_USER: ${{ secrets.PG_USER }}
+          PG_PORT: ${{ secrets.PG_PORT }}
 
       - name: Test dbt models
         run: |
@@ -68,6 +92,7 @@ jobs:
           PG_HOST: ${{ secrets.PG_HOST }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           PG_USER: ${{ secrets.PG_USER }}
+          PG_PORT: ${{ secrets.PG_PORT }}
       
       - name: Check Freshness of dbt models
         if: ${{ always() && steps.run_dbt_step.conclusion == 'success'}}
@@ -80,6 +105,7 @@ jobs:
           PG_HOST: ${{ secrets.PG_HOST }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           PG_USER: ${{ secrets.PG_USER }}
+          PG_PORT: ${{ secrets.PG_PORT }}
 
       - name: Run Elementary
         if: ${{ always() && steps.run_dbt_step.conclusion == 'success'}}
