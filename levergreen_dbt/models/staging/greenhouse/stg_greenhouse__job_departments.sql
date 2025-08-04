@@ -1,8 +1,8 @@
 with greenhouse_departments_by_levergreen_id as (
     select
         *,
-        to_timestamp(created_at) at time zone 'UTC' as created_at_utc,
-        to_timestamp(updated_at) at time zone 'UTC' as updated_at_utc,
+        created_at at time zone 'UTC' as created_at_utc,
+        updated_at at time zone 'UTC' as updated_at_utc,
         cast(existing_html_used as boolean) as uses_existing, 
         row_number() over(
             partition by levergreen_id
@@ -19,7 +19,7 @@ with greenhouse_departments_by_levergreen_id as (
             'greenhouse',
             'greenhouse_job_departments'
         ) }}
-    where updated_at > 1684600000
+    where updated_at > to_timestamp(1684600000)
 )
 
 select

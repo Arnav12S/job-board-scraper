@@ -40,7 +40,7 @@ sources:
             description: Timestamp of when the ashby site was scraped, in UNIX time.
             tests:
               - not_null
-          - name: ashby_job_board_source
+          - name: source
             description: Ashby careers page source. 
             tests:
               - not_null
@@ -90,7 +90,7 @@ sources:
             description: Timestamp of when the ashby site was scraped, in UNIX time.
             tests:
               - not_null
-          - name: ashby_job_board_source
+          - name: source
             description: Ashby careers page source. 
             tests:
               - not_null
@@ -117,7 +117,7 @@ sources:
         tests:
           - dbt_expectations.expect_table_columns_to_match_set:
               column_list: ["id",
-                "levergreen_id", "created_at" , "updated_at", "company_name", "ashby_job_board_source",
+                "levergreen_id", "created_at" , "updated_at", "company_name", "source",
                   "run_hash", "raw_json_file_location", "existing_json_used", "opening_id", "opening_name",
                   "department_id", "location_id", "location_name", "employment_type", "compensation_tier",
                   "opening_link"

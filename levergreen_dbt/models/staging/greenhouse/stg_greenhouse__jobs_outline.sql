@@ -3,13 +3,13 @@ with convert_unix_to_ts as (
         *,
         split_part(source, '/', 4) = 'embed'
             or split_part(split_part(source,'/',3),'.',1) = 'job-boards' as is_full_link, 
-        to_timestamp(created_at) at time zone 'UTC' as created_at_utc,
-        to_timestamp(updated_at) at time zone 'UTC' as updated_at_utc
+        created_at at time zone 'UTC' as created_at_utc,
+        updated_at at time zone 'UTC' as updated_at_utc
     from {{ source(
             'greenhouse',
             'greenhouse_jobs_outline'
         ) }}
-    {# where updated_at > 1684600000 #}
+    {# where updated_at > to_timestamp(1684600000) #}
 ),
 
 convert_ts_to_date as (

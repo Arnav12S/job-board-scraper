@@ -43,7 +43,7 @@ select
     updated_at_utc,
     created_date_utc,
     updated_date_utc,
-    ashby_job_board_source as source,
+    source,
     uses_existing,
     raw_json_file_location,
     run_hash,
