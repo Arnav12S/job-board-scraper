@@ -4,7 +4,7 @@ levergreen_dbt:
       type: postgres
       threads: 4
       host:  "{{ env_var('PG_HOST') }}"
-      port: 5432
+      port: 6543
       user: "{{ env_var('PG_USER') }}"
       pass: "{{ env_var('PG_PASSWORD') }}"
       dbname: "{{ env_var('PG_DATABASE') }}"
@@ -14,7 +14,7 @@ levergreen_dbt:
       type: postgres
       threads: 4
       host:  "{{ env_var('PG_HOST') }}"
-      port: 5432
+      port: 6543
       user: "{{ env_var('PG_USER') }}"
       pass: "{{ env_var('PG_PASSWORD') }}"
       dbname: "{{ env_var('PG_DATABASE') }}"
@@ -27,7 +27,7 @@ elementary:
     default:
       type: "postgres"
       host:  "{{ env_var('PG_HOST') }}"
-      port: 5432
+      port: 6543
       user: "{{ env_var('PG_USER') }}"
       pass: "{{ env_var('PG_PASSWORD') }}"
       dbname: "{{ env_var('PG_DATABASE') }}"
