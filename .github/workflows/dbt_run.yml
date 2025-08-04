@@ -49,7 +49,7 @@ jobs:
           cd levergreen_dbt
           mkdir -p logs
           echo "Running dbt models..."
-          dbt build > logs/dbt_run_${GITHUB_RUN_NUMBER}.log 2>&1
+          dbt run > logs/dbt_run_${GITHUB_RUN_NUMBER}.log 2>&1
           echo "dbt models run completed with status $?"
           cat logs/dbt_run_${GITHUB_RUN_NUMBER}.log
         env:
