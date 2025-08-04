@@ -25,7 +25,7 @@ class PostgresWrapper:
                     user=os.environ.get("PG_USER"),
                     password=os.environ.get("PG_PASSWORD"),
                     dbname=os.environ.get("PG_DATABASE"),
-                    port=os.environ.get("PG_PORT", "5432")
+                    port=os.environ.get("PG_PORT", "6543")
                 )
                 cls._pid = current_pid
                 logger.info(f"PostgreSQL connection pool created successfully for process {current_pid}")

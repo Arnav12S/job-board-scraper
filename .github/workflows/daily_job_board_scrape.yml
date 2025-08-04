@@ -94,7 +94,7 @@ jobs:
           echo "    prod:" >> ~/.dbt/profiles.yml
           echo "      type: postgres" >> ~/.dbt/profiles.yml
           echo "      host: ${{ secrets.PG_HOST }}" >> ~/.dbt/profiles.yml
-          echo "      port: 5432" >> ~/.dbt/profiles.yml
+          echo "      port: 6543" >> ~/.dbt/profiles.yml
           echo "      user: ${{ secrets.PG_USER }}" >> ~/.dbt/profiles.yml
           echo "      pass: ${{ secrets.PG_PASSWORD }}" >> ~/.dbt/profiles.yml
           echo "      dbname: ${{ secrets.PG_DATABASE }}" >> ~/.dbt/profiles.yml

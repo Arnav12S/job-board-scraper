@@ -18,7 +18,7 @@ else:
 print(f"PG_HOST: {os.getenv('PG_HOST')}")
 print(f"PG_USER: {os.getenv('PG_USER')}")
 print(f"PG_DATABASE: {os.getenv('PG_DATABASE')}")
-print(f"PG_PORT: {os.getenv('PG_PORT', '5432')}")
+print(f"PG_PORT: {os.getenv('PG_PORT', '6543')}")
 
 # Verify required environment variables are set
 required_vars = ['PG_HOST', 'PG_USER', 'PG_PASSWORD', 'PG_DATABASE']
