@@ -1,0 +1,16 @@
+[0m08:05:27  Running with dbt=1.8.9
+[0m08:05:27  Registered adapter: postgres=1.8.2
+[0m08:05:27  Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m08:05:31  [[33mWARNING[0m]: Deprecated functionality
+The `tests` config has been renamed to `data_tests`. Please see
+https://docs.getdbt.com/docs/build/data-tests#new-data_tests-syntax for more
+information.
+[0m08:05:32  Found 48 models, 123 data tests, 2 operations, 12 sources, 1618 macros
+[0m08:05:32  
+[0m08:05:34  
+[0m08:05:34  Finished running  in 0 hours 0 minutes and 1.59 seconds (1.59s).
+[0m08:05:34  Encountered an error:
+Database Error
+  connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: FATAL:  Tenant or user not found
+  connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: FATAL:  Tenant or user not found
+  
