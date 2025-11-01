@@ -1,0 +1,8 @@
+2025-11-01 07:09:39 [INFO] logger: Processing ATS: greenhouse
+2025-11-01 07:09:39 [ERROR] postgres_wrapper: Error creating connection pool: connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: FATAL:  Tenant or user not found
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: FATAL:  Tenant or user not found
+
+2025-11-01 07:09:39 [ERROR] logger: Error fetching career page URLs for greenhouse: connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: FATAL:  Tenant or user not found
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: FATAL:  Tenant or user not found
+
+2025-11-01 07:09:39 [ERROR] logger: Error in main process: cannot access local variable 'cursor' where it is not associated with a value
