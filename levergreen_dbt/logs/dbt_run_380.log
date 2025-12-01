@@ -1,0 +1,383 @@
+[0m08:06:29  Running with dbt=1.8.9
+[0m08:06:29  Registered adapter: postgres=1.8.2
+[0m08:06:29  Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m08:06:34  [[33mWARNING[0m]: Deprecated functionality
+The `tests` config has been renamed to `data_tests`. Please see
+https://docs.getdbt.com/docs/build/data-tests#new-data_tests-syntax for more
+information.
+[0m08:06:35  Found 48 models, 123 data tests, 2 operations, 12 sources, 1618 macros
+[0m08:06:35  
+[0m08:06:39  
+[0m08:06:39  Running 1 on-run-start hook
+[0m08:06:39  Elementary: Runtime data: {"config": {}, "dbt_version": "1.8.9", "elementary_version": "0.19.4", "database": "postgres", "schema": "elementary"}
+[0m08:06:40  1 of 1 START hook: elementary.on-run-start.0 ................................... [RUN]
+[0m08:06:40  1 of 1 OK hook: elementary.on-run-start.0 ...................................... [[32mOK[0m in 0.00s]
+[0m08:06:40  
+[0m08:06:40  Concurrency: 4 threads (target='prod')
+[0m08:06:40  
+[0m08:06:40  1 of 171 START sql incremental model elementary.data_monitoring_metrics ........ [RUN]
+[0m08:06:40  2 of 171 START sql incremental model elementary.dbt_columns .................... [RUN]
+[0m08:06:40  3 of 171 START sql incremental model elementary.dbt_exposures .................. [RUN]
+[0m08:06:40  4 of 171 START sql incremental model elementary.dbt_groups ..................... [RUN]
+[0m08:06:42  1 of 171 OK created sql incremental model elementary.data_monitoring_metrics ... [[32mINSERT 0 0[0m in 2.63s]
+[0m08:06:42  5 of 171 START sql incremental model elementary.dbt_invocations ................ [RUN]
+[0m08:06:43  4 of 171 OK created sql incremental model elementary.dbt_groups ................ [[32mINSERT 0 0[0m in 2.96s]
+[0m08:06:43  6 of 171 START sql incremental model elementary.dbt_metrics .................... [RUN]
+[0m08:06:43  3 of 171 OK created sql incremental model elementary.dbt_exposures ............. [[32mINSERT 0 0[0m in 3.00s]
+[0m08:06:43  7 of 171 START sql incremental model elementary.dbt_models ..................... [RUN]
+[0m08:06:43  2 of 171 OK created sql incremental model elementary.dbt_columns ............... [[32mINSERT 0 0[0m in 3.15s]
+[0m08:06:43  8 of 171 START sql incremental model elementary.dbt_run_results ................ [RUN]
+[0m08:06:44  5 of 171 OK created sql incremental model elementary.dbt_invocations ........... [[32mINSERT 0 0[0m in 2.15s]
+[0m08:06:44  9 of 171 START sql incremental model elementary.dbt_seeds ...................... [RUN]
+[0m08:06:45  8 of 171 OK created sql incremental model elementary.dbt_run_results ........... [[32mINSERT 0 0[0m in 1.97s]
+[0m08:06:45  10 of 171 START sql incremental model elementary.dbt_snapshots ................. [RUN]
+[0m08:06:45  7 of 171 OK created sql incremental model elementary.dbt_models ................ [[32mINSERT 0 0[0m in 2.13s]
+[0m08:06:45  11 of 171 START sql incremental model elementary.dbt_source_freshness_results .. [RUN]
+[0m08:06:45  6 of 171 OK created sql incremental model elementary.dbt_metrics ............... [[32mINSERT 0 0[0m in 2.27s]
+[0m08:06:45  12 of 171 START sql incremental model elementary.dbt_sources ................... [RUN]
+[0m08:06:47  9 of 171 OK created sql incremental model elementary.dbt_seeds ................. [[32mINSERT 0 0[0m in 2.17s]
+[0m08:06:47  13 of 171 START sql incremental model elementary.dbt_tests ..................... [RUN]
+[0m08:06:47  11 of 171 OK created sql incremental model elementary.dbt_source_freshness_results  [[32mINSERT 0 0[0m in 1.96s]
+[0m08:06:47  14 of 171 START sql incremental model elementary.elementary_test_results ....... [RUN]
+[0m08:06:47  10 of 171 OK created sql incremental model elementary.dbt_snapshots ............ [[32mINSERT 0 0[0m in 2.13s]
+[0m08:06:47  15 of 171 START sql table model elementary.metadata ............................ [RUN]
+[0m08:06:47  12 of 171 OK created sql incremental model elementary.dbt_sources .............. [[32mINSERT 0 0[0m in 2.12s]
+[0m08:06:47  16 of 171 START sql incremental model elementary.schema_columns_snapshot ....... [RUN]
+[0m08:06:49  14 of 171 OK created sql incremental model elementary.elementary_test_results .. [[32mINSERT 0 0[0m in 2.03s]
+[0m08:06:49  17 of 171 START sql view model public.stg_workable_jobs ........................ [RUN]
+[0m08:06:49  15 of 171 OK created sql table model elementary.metadata ....................... [[32mSELECT 1[0m in 1.93s]
+[0m08:06:49  18 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_ashby_ashby_job_departments_id__levergreen_id__created_at__updated_at__company_name__ashby_job_board_source__run_hash__raw_json_file_location__existing_json_used__department_id__department_name__parent_department_id  [RUN]
+[0m08:06:49  16 of 171 OK created sql incremental model elementary.schema_columns_snapshot .. [[32mINSERT 0 0[0m in 2.09s]
+[0m08:06:49  19 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_ashby_ashby_job_locations_id__levergreen_id__created_at__updated_at__company_name__ashby_job_board_source__run_hash__raw_json_file_location__existing_json_used__opening_id__secondary_location_id__secondary_location_name  [RUN]
+[0m08:06:49  13 of 171 OK created sql incremental model elementary.dbt_tests ................ [[32mINSERT 0 0[0m in 2.67s]
+[0m08:06:49  20 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_ashby_ashby_jobs_outline_id__levergreen_id__created_at__updated_at__company_name__source__run_hash__raw_json_file_location__existing_json_used__opening_id__opening_name__department_id__location_id__location_name__employment_type__compensation_tier__opening_link  [RUN]
+[0m08:06:50  [[33mWARNING[0m]: Installed package 'elementary' is overriding the built-in
+materialization 'test'. Overrides of built-in materializations from installed
+packages will be deprecated in future versions of dbt. Please refer to https://d
+ocs.getdbt.com/reference/global-configs/legacy-behaviors#require_explicit_packag
+e_overrides_for_builtin_materializations for detailed documentation and
+suggested workarounds.
+[0m08:06:50  17 of 171 ERROR creating sql view model public.stg_workable_jobs ............... [[31mERROR[0m in 1.46s]
+[0m08:06:50  21 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_greenhouse_greenhouse_job_departments_id__levergreen_id__created_at__updated_at__source__company_name__department_category__department_id__department_name__existing_html_used__raw_html_file_location__run_hash  [RUN]
+[0m08:06:50  18 of 171 PASS dbt_expectations_source_expect_table_columns_to_match_set_ashby_ashby_job_departments_id__levergreen_id__created_at__updated_at__company_name__ashby_job_board_source__run_hash__raw_json_file_location__existing_json_used__department_id__department_name__parent_department_id  [[32mPASS[0m in 1.58s]
+[0m08:06:50  22 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_greenhouse_greenhouse_jobs_outline_id__levergreen_id__created_at__updated_at__source__department_ids__location__office_ids__opening_link__opening_title__existing_html_used__run_hash__raw_html_file_location  [RUN]
+[0m08:06:51  19 of 171 PASS dbt_expectations_source_expect_table_columns_to_match_set_ashby_ashby_job_locations_id__levergreen_id__created_at__updated_at__company_name__ashby_job_board_source__run_hash__raw_json_file_location__existing_json_used__opening_id__secondary_location_id__secondary_location_name  [[32mPASS[0m in 1.53s]
+[0m08:06:51  23 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_lever_lever_jobs_outline_id__levergreen_id__created_at__updated_at__source__department_names__location__workplace_type__opening_link__opening_title__company_name__existing_html_used__raw_html_file_location__run_hash  [RUN]
+[0m08:06:51  20 of 171 PASS dbt_expectations_source_expect_table_columns_to_match_set_ashby_ashby_jobs_outline_id__levergreen_id__created_at__updated_at__company_name__source__run_hash__raw_json_file_location__existing_json_used__opening_id__opening_name__department_id__location_id__location_name__employment_type__compensation_tier__opening_link  [[32mPASS[0m in 1.47s]
+[0m08:06:51  24 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_levergreen_job_board_urls_id__company_url__is_enabled__is_prospect__is_web_scraped__ats__company  [RUN]
+[0m08:06:52  21 of 171 PASS dbt_expectations_source_expect_table_columns_to_match_set_greenhouse_greenhouse_job_departments_id__levergreen_id__created_at__updated_at__source__company_name__department_category__department_id__department_name__existing_html_used__raw_html_file_location__run_hash  [[32mPASS[0m in 1.36s]
+[0m08:06:52  25 of 171 START test dbt_expectations_source_expect_table_columns_to_match_set_rippling_rippling_jobs_outline_id__job_id__created_at__title__url__location__board_token__department__run_hash__api_endpoint  [RUN]
+[0m08:06:52  22 of 171 PASS dbt_expectations_source_expect_table_columns_to_match_set_greenhouse_greenhouse_jobs_outline_id__levergreen_id__created_at__updated_at__source__department_ids__location__office_ids__opening_link__opening_title__existing_html_used__run_hash__raw_html_file_location  [[32mPASS[0m in 1.34s]
+[0m08:06:52  26 of 171 START test source_accepted_values_ashby_ashby_jobs_outline_employment_type__Intern__Contract__PartTime__FullTime__Temporary  [RUN]
+[0m08:06:52  23 of 171 PASS dbt_expectations_source_expect_table_columns_to_match_set_lever_lever_jobs_outline_id__levergreen_id__created_at__updated_at__source__department_names__location__workplace_type__opening_link__opening_title__company_name__existing_html_used__raw_html_file_location__run_hash  [[32mPASS[0m in 1.46s]
+[0m08:06:52  27 of 171 START test source_accepted_values_greenhouse_greenhouse_job_departments_department_category__level_0__level_1__level_2__level_3__level_4__level_5  [RUN]
+[0m08:06:52  24 of 171 FAIL 2 dbt_expectations_source_expect_table_columns_to_match_set_levergreen_job_board_urls_id__company_url__is_enabled__is_prospect__is_web_scraped__ats__company  [[31mFAIL 2[0m in 1.54s]
+[0m08:06:52  28 of 171 START test source_accepted_values_lever_lever_jobs_outline_workplace_type__On_site__Remote__Hybrid  [RUN]
+[0m08:06:53  25 of 171 FAIL 1 dbt_expectations_source_expect_table_columns_to_match_set_rippling_rippling_jobs_outline_id__job_id__created_at__title__url__location__board_token__department__run_hash__api_endpoint  [[31mFAIL 1[0m in 1.59s]
+[0m08:06:53  29 of 171 START test source_not_null_ashby_ashby_job_departments_company_name .. [RUN]
+[0m08:06:54  26 of 171 PASS source_accepted_values_ashby_ashby_jobs_outline_employment_type__Intern__Contract__PartTime__FullTime__Temporary  [[32mPASS[0m in 1.94s]
+[0m08:06:54  30 of 171 START test source_not_null_ashby_ashby_job_departments_created_at .... [RUN]
+[0m08:06:54  28 of 171 PASS source_accepted_values_lever_lever_jobs_outline_workplace_type__On_site__Remote__Hybrid  [[32mPASS[0m in 2.19s]
+[0m08:06:54  31 of 171 START test source_not_null_ashby_ashby_job_departments_id ............ [RUN]
+[0m08:06:55  29 of 171 PASS source_not_null_ashby_ashby_job_departments_company_name ........ [[32mPASS[0m in 1.43s]
+[0m08:06:55  32 of 171 START test source_not_null_ashby_ashby_job_departments_levergreen_id . [RUN]
+[0m08:06:55  27 of 171 WARN 33 source_accepted_values_greenhouse_greenhouse_job_departments_department_category__level_0__level_1__level_2__level_3__level_4__level_5  [[33mWARN 33[0m in 2.66s]
+[0m08:06:55  33 of 171 START test source_not_null_ashby_ashby_job_departments_source ........ [RUN]
+[0m08:06:55  30 of 171 FAIL 6 source_not_null_ashby_ashby_job_departments_created_at ........ [[31mFAIL 6[0m in 1.47s]
+[0m08:06:55  34 of 171 START test source_not_null_ashby_ashby_job_departments_updated_at .... [RUN]
+[0m08:06:56  31 of 171 PASS source_not_null_ashby_ashby_job_departments_id .................. [[32mPASS[0m in 1.22s]
+[0m08:06:56  35 of 171 START test source_not_null_ashby_ashby_job_locations_company_name .... [RUN]
+[0m08:06:56  32 of 171 PASS source_not_null_ashby_ashby_job_departments_levergreen_id ....... [[32mPASS[0m in 1.29s]
+[0m08:06:56  36 of 171 START test source_not_null_ashby_ashby_job_locations_created_at ...... [RUN]
+[0m08:06:56  33 of 171 ERROR source_not_null_ashby_ashby_job_departments_source ............. [[31mERROR[0m in 1.24s]
+[0m08:06:56  37 of 171 START test source_not_null_ashby_ashby_job_locations_id .............. [RUN]
+[0m08:06:56  34 of 171 PASS source_not_null_ashby_ashby_job_departments_updated_at .......... [[32mPASS[0m in 1.21s]
+[0m08:06:56  38 of 171 START test source_not_null_ashby_ashby_job_locations_levergreen_id ... [RUN]
+[0m08:06:57  37 of 171 PASS source_not_null_ashby_ashby_job_locations_id .................... [[32mPASS[0m in 1.23s]
+[0m08:06:57  39 of 171 START test source_not_null_ashby_ashby_job_locations_source .......... [RUN]
+[0m08:06:57  35 of 171 PASS source_not_null_ashby_ashby_job_locations_company_name .......... [[32mPASS[0m in 1.62s]
+[0m08:06:57  40 of 171 START test source_not_null_ashby_ashby_job_locations_updated_at ...... [RUN]
+[0m08:06:57  36 of 171 FAIL 4 source_not_null_ashby_ashby_job_locations_created_at .......... [[31mFAIL 4[0m in 1.50s]
+[0m08:06:57  41 of 171 START test source_not_null_ashby_ashby_jobs_outline_ashby_job_board_source  [RUN]
+[0m08:06:58  38 of 171 PASS source_not_null_ashby_ashby_job_locations_levergreen_id ......... [[32mPASS[0m in 1.37s]
+[0m08:06:58  42 of 171 START test source_not_null_ashby_ashby_jobs_outline_company_name ..... [RUN]
+[0m08:06:58  39 of 171 ERROR source_not_null_ashby_ashby_job_locations_source ............... [[31mERROR[0m in 1.25s]
+[0m08:06:58  43 of 171 START test source_not_null_ashby_ashby_jobs_outline_created_at ....... [RUN]
+[0m08:06:59  40 of 171 PASS source_not_null_ashby_ashby_job_locations_updated_at ............ [[32mPASS[0m in 1.27s]
+[0m08:06:59  44 of 171 START test source_not_null_ashby_ashby_jobs_outline_id ............... [RUN]
+[0m08:06:59  41 of 171 ERROR source_not_null_ashby_ashby_jobs_outline_ashby_job_board_source  [[31mERROR[0m in 1.27s]
+[0m08:06:59  45 of 171 START test source_not_null_ashby_ashby_jobs_outline_levergreen_id .... [RUN]
+[0m08:06:59  42 of 171 PASS source_not_null_ashby_ashby_jobs_outline_company_name ........... [[32mPASS[0m in 1.18s]
+[0m08:06:59  46 of 171 START test source_not_null_ashby_ashby_jobs_outline_location_id ...... [RUN]
+[0m08:07:00  43 of 171 FAIL 5 source_not_null_ashby_ashby_jobs_outline_created_at ........... [[31mFAIL 5[0m in 1.37s]
+[0m08:07:00  47 of 171 START test source_not_null_ashby_ashby_jobs_outline_location_name .... [RUN]
+[0m08:07:00  44 of 171 PASS source_not_null_ashby_ashby_jobs_outline_id ..................... [[32mPASS[0m in 1.32s]
+[0m08:07:00  48 of 171 START test source_not_null_ashby_ashby_jobs_outline_opening_id ....... [RUN]
+[0m08:07:00  45 of 171 PASS source_not_null_ashby_ashby_jobs_outline_levergreen_id .......... [[32mPASS[0m in 1.27s]
+[0m08:07:00  49 of 171 START test source_not_null_ashby_ashby_jobs_outline_opening_name ..... [RUN]
+[0m08:07:00  46 of 171 PASS source_not_null_ashby_ashby_jobs_outline_location_id ............ [[32mPASS[0m in 1.31s]
+[0m08:07:00  50 of 171 START test source_not_null_ashby_ashby_jobs_outline_updated_at ....... [RUN]
+[0m08:07:01  47 of 171 PASS source_not_null_ashby_ashby_jobs_outline_location_name .......... [[32mPASS[0m in 1.29s]
+[0m08:07:01  51 of 171 START test source_not_null_greenhouse_greenhouse_job_departments_company_name  [RUN]
+[0m08:07:01  48 of 171 PASS source_not_null_ashby_ashby_jobs_outline_opening_id ............. [[32mPASS[0m in 1.28s]
+[0m08:07:01  49 of 171 PASS source_not_null_ashby_ashby_jobs_outline_opening_name ........... [[32mPASS[0m in 1.19s]
+[0m08:07:01  52 of 171 START test source_not_null_greenhouse_greenhouse_job_departments_created_at  [RUN]
+[0m08:07:01  53 of 171 START test source_not_null_greenhouse_greenhouse_job_departments_id .. [RUN]
+[0m08:07:01  50 of 171 PASS source_not_null_ashby_ashby_jobs_outline_updated_at ............. [[32mPASS[0m in 1.23s]
+[0m08:07:01  54 of 171 START test source_not_null_greenhouse_greenhouse_job_departments_levergreen_id  [RUN]
+[0m08:07:02  51 of 171 PASS source_not_null_greenhouse_greenhouse_job_departments_company_name  [[32mPASS[0m in 1.25s]
+[0m08:07:02  55 of 171 START test source_not_null_greenhouse_greenhouse_job_departments_source  [RUN]
+[0m08:07:02  52 of 171 PASS source_not_null_greenhouse_greenhouse_job_departments_created_at  [[32mPASS[0m in 1.26s]
+[0m08:07:02  56 of 171 START test source_not_null_greenhouse_greenhouse_job_departments_updated_at  [RUN]
+[0m08:07:02  53 of 171 PASS source_not_null_greenhouse_greenhouse_job_departments_id ........ [[32mPASS[0m in 1.35s]
+[0m08:07:02  57 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_created_at  [RUN]
+[0m08:07:03  54 of 171 PASS source_not_null_greenhouse_greenhouse_job_departments_levergreen_id  [[32mPASS[0m in 1.31s]
+[0m08:07:03  58 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_id ..... [RUN]
+[0m08:07:04  55 of 171 PASS source_not_null_greenhouse_greenhouse_job_departments_source .... [[32mPASS[0m in 1.25s]
+[0m08:07:04  59 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_levergreen_id  [RUN]
+[0m08:07:04  56 of 171 PASS source_not_null_greenhouse_greenhouse_job_departments_updated_at  [[32mPASS[0m in 1.40s]
+[0m08:07:04  60 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_location  [RUN]
+[0m08:07:04  57 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_created_at ... [[32mPASS[0m in 1.49s]
+[0m08:07:04  61 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_opening_link  [RUN]
+[0m08:07:04  58 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_id ........... [[32mPASS[0m in 1.23s]
+[0m08:07:04  62 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_opening_title  [RUN]
+[0m08:07:05  59 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_levergreen_id  [[32mPASS[0m in 1.28s]
+[0m08:07:05  63 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_source . [RUN]
+[0m08:07:05  60 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_location ..... [[32mPASS[0m in 1.20s]
+[0m08:07:05  64 of 171 START test source_not_null_greenhouse_greenhouse_jobs_outline_updated_at  [RUN]
+[0m08:07:05  62 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_opening_title  [[32mPASS[0m in 1.19s]
+[0m08:07:05  65 of 171 START test source_not_null_lever_lever_jobs_outline_created_at ....... [RUN]
+[0m08:07:05  61 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_opening_link . [[32mPASS[0m in 1.29s]
+[0m08:07:05  66 of 171 START test source_not_null_lever_lever_jobs_outline_department_names . [RUN]
+[0m08:07:06  63 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_source ....... [[32mPASS[0m in 1.24s]
+[0m08:07:06  67 of 171 START test source_not_null_lever_lever_jobs_outline_id ............... [RUN]
+[0m08:07:06  64 of 171 PASS source_not_null_greenhouse_greenhouse_jobs_outline_updated_at ... [[32mPASS[0m in 1.19s]
+[0m08:07:06  68 of 171 START test source_not_null_lever_lever_jobs_outline_levergreen_id .... [RUN]
+[0m08:07:06  65 of 171 PASS source_not_null_lever_lever_jobs_outline_created_at ............. [[32mPASS[0m in 1.22s]
+[0m08:07:06  69 of 171 START test source_not_null_lever_lever_jobs_outline_location ......... [RUN]
+[0m08:07:07  66 of 171 PASS source_not_null_lever_lever_jobs_outline_department_names ....... [[32mPASS[0m in 1.30s]
+[0m08:07:07  70 of 171 START test source_not_null_lever_lever_jobs_outline_opening_link ..... [RUN]
+[0m08:07:07  67 of 171 PASS source_not_null_lever_lever_jobs_outline_id ..................... [[32mPASS[0m in 1.24s]
+[0m08:07:07  71 of 171 START test source_not_null_lever_lever_jobs_outline_opening_title .... [RUN]
+[0m08:07:07  68 of 171 PASS source_not_null_lever_lever_jobs_outline_levergreen_id .......... [[32mPASS[0m in 1.25s]
+[0m08:07:07  72 of 171 START test source_not_null_lever_lever_jobs_outline_source ........... [RUN]
+[0m08:07:08  70 of 171 PASS source_not_null_lever_lever_jobs_outline_opening_link ........... [[32mPASS[0m in 1.25s]
+[0m08:07:08  73 of 171 START test source_not_null_lever_lever_jobs_outline_updated_at ....... [RUN]
+[0m08:07:08  69 of 171 WARN 8 source_not_null_lever_lever_jobs_outline_location ............. [[33mWARN 8[0m in 1.45s]
+[0m08:07:08  74 of 171 START test source_not_null_levergreen_job_board_urls_company_url ..... [RUN]
+[0m08:07:09  71 of 171 PASS source_not_null_lever_lever_jobs_outline_opening_title .......... [[32mPASS[0m in 1.28s]
+[0m08:07:09  75 of 171 START test source_not_null_levergreen_job_board_urls_id .............. [RUN]
+[0m08:07:09  72 of 171 PASS source_not_null_lever_lever_jobs_outline_source ................. [[32mPASS[0m in 1.30s]
+[0m08:07:09  76 of 171 START test source_not_null_rippling_rippling_jobs_outline_api_endpoint  [RUN]
+[0m08:07:09  73 of 171 PASS source_not_null_lever_lever_jobs_outline_updated_at ............. [[32mPASS[0m in 1.33s]
+[0m08:07:09  77 of 171 START test source_not_null_rippling_rippling_jobs_outline_board_token  [RUN]
+[0m08:07:09  74 of 171 PASS source_not_null_levergreen_job_board_urls_company_url ........... [[32mPASS[0m in 1.29s]
+[0m08:07:09  78 of 171 START test source_not_null_rippling_rippling_jobs_outline_created_at . [RUN]
+[0m08:07:10  75 of 171 PASS source_not_null_levergreen_job_board_urls_id .................... [[32mPASS[0m in 1.31s]
+[0m08:07:10  79 of 171 START test source_not_null_rippling_rippling_jobs_outline_department . [RUN]
+[0m08:07:10  76 of 171 PASS source_not_null_rippling_rippling_jobs_outline_api_endpoint ..... [[32mPASS[0m in 1.23s]
+[0m08:07:10  80 of 171 START test source_not_null_rippling_rippling_jobs_outline_id ......... [RUN]
+[0m08:07:10  77 of 171 PASS source_not_null_rippling_rippling_jobs_outline_board_token ...... [[32mPASS[0m in 1.17s]
+[0m08:07:10  81 of 171 START test source_not_null_rippling_rippling_jobs_outline_job_id ..... [RUN]
+[0m08:07:11  78 of 171 PASS source_not_null_rippling_rippling_jobs_outline_created_at ....... [[32mPASS[0m in 1.31s]
+[0m08:07:11  82 of 171 START test source_not_null_rippling_rippling_jobs_outline_location ... [RUN]
+[0m08:07:11  80 of 171 PASS source_not_null_rippling_rippling_jobs_outline_id ............... [[32mPASS[0m in 1.24s]
+[0m08:07:11  83 of 171 START test source_not_null_rippling_rippling_jobs_outline_run_hash ... [RUN]
+[0m08:07:11  79 of 171 PASS source_not_null_rippling_rippling_jobs_outline_department ....... [[32mPASS[0m in 1.30s]
+[0m08:07:11  84 of 171 START test source_not_null_rippling_rippling_jobs_outline_title ...... [RUN]
+[0m08:07:12  81 of 171 PASS source_not_null_rippling_rippling_jobs_outline_job_id ........... [[32mPASS[0m in 1.30s]
+[0m08:07:12  85 of 171 START test source_not_null_rippling_rippling_jobs_outline_url ........ [RUN]
+[0m08:07:12  82 of 171 PASS source_not_null_rippling_rippling_jobs_outline_location ......... [[32mPASS[0m in 1.24s]
+[0m08:07:12  86 of 171 START test source_unique_ashby_ashby_job_departments_id .............. [RUN]
+[0m08:07:13  83 of 171 PASS source_not_null_rippling_rippling_jobs_outline_run_hash ......... [[32mPASS[0m in 1.29s]
+[0m08:07:13  87 of 171 START test source_unique_ashby_ashby_job_locations_id ................ [RUN]
+[0m08:07:13  84 of 171 PASS source_not_null_rippling_rippling_jobs_outline_title ............ [[32mPASS[0m in 1.28s]
+[0m08:07:13  88 of 171 START test source_unique_ashby_ashby_jobs_outline_id ................. [RUN]
+[0m08:07:13  85 of 171 PASS source_not_null_rippling_rippling_jobs_outline_url .............. [[32mPASS[0m in 1.24s]
+[0m08:07:13  89 of 171 START test source_unique_greenhouse_greenhouse_job_departments_id .... [RUN]
+[0m08:07:13  86 of 171 PASS source_unique_ashby_ashby_job_departments_id .................... [[32mPASS[0m in 1.30s]
+[0m08:07:13  90 of 171 START test source_unique_greenhouse_greenhouse_jobs_outline_id ....... [RUN]
+[0m08:07:14  87 of 171 PASS source_unique_ashby_ashby_job_locations_id ...................... [[32mPASS[0m in 1.29s]
+[0m08:07:14  91 of 171 START test source_unique_lever_lever_jobs_outline_id ................. [RUN]
+[0m08:07:14  88 of 171 PASS source_unique_ashby_ashby_jobs_outline_id ....................... [[32mPASS[0m in 1.28s]
+[0m08:07:14  92 of 171 START test source_unique_levergreen_job_board_urls_company_url ....... [RUN]
+[0m08:07:14  90 of 171 PASS source_unique_greenhouse_greenhouse_jobs_outline_id ............. [[32mPASS[0m in 1.31s]
+[0m08:07:14  93 of 171 START test source_unique_levergreen_job_board_urls_id ................ [RUN]
+[0m08:07:14  89 of 171 PASS source_unique_greenhouse_greenhouse_job_departments_id .......... [[32mPASS[0m in 1.61s]
+[0m08:07:14  94 of 171 START test source_unique_rippling_rippling_jobs_outline_id ........... [RUN]
+[0m08:07:15  91 of 171 PASS source_unique_lever_lever_jobs_outline_id ....................... [[32mPASS[0m in 1.69s]
+[0m08:07:15  95 of 171 START sql view model elementary.metrics_anomaly_score ................ [RUN]
+[0m08:07:16  94 of 171 PASS source_unique_rippling_rippling_jobs_outline_id ................. [[32mPASS[0m in 1.32s]
+[0m08:07:16  96 of 171 START sql view model elementary.monitors_runs ........................ [RUN]
+[0m08:07:16  92 of 171 PASS source_unique_levergreen_job_board_urls_company_url ............. [[32mPASS[0m in 2.15s]
+[0m08:07:16  97 of 171 START sql view model elementary.job_run_results ...................... [RUN]
+[0m08:07:16  93 of 171 PASS source_unique_levergreen_job_board_urls_id ...................... [[32mPASS[0m in 1.60s]
+[0m08:07:16  98 of 171 START sql view model elementary.model_run_results .................... [RUN]
+[0m08:07:17  95 of 171 OK created sql view model elementary.metrics_anomaly_score ........... [[32mCREATE VIEW[0m in 1.79s]
+[0m08:07:17  99 of 171 START sql view model elementary.seed_run_results ..................... [RUN]
+[0m08:07:18  96 of 171 OK created sql view model elementary.monitors_runs ................... [[32mCREATE VIEW[0m in 1.79s]
+[0m08:07:18  100 of 171 START sql view model elementary.snapshot_run_results ................ [RUN]
+[0m08:07:18  97 of 171 OK created sql view model elementary.job_run_results ................. [[32mCREATE VIEW[0m in 1.82s]
+[0m08:07:18  101 of 171 START sql view model elementary.alerts_dbt_source_freshness ......... [RUN]
+[0m08:07:18  98 of 171 OK created sql view model elementary.model_run_results ............... [[32mCREATE VIEW[0m in 1.85s]
+[0m08:07:18  102 of 171 START sql view model elementary.alerts_anomaly_detection ............ [RUN]
+[0m08:07:19  99 of 171 OK created sql view model elementary.seed_run_results ................ [[32mCREATE VIEW[0m in 1.63s]
+[0m08:07:19  103 of 171 START sql view model elementary.alerts_dbt_tests .................... [RUN]
+[0m08:07:19  100 of 171 OK created sql view model elementary.snapshot_run_results ........... [[32mCREATE VIEW[0m in 1.76s]
+[0m08:07:19  104 of 171 START sql view model elementary.alerts_schema_changes ............... [RUN]
+[0m08:07:20  101 of 171 OK created sql view model elementary.alerts_dbt_source_freshness .... [[32mCREATE VIEW[0m in 1.82s]
+[0m08:07:20  105 of 171 START sql incremental model elementary.test_result_rows ............. [RUN]
+[0m08:07:20  102 of 171 OK created sql view model elementary.alerts_anomaly_detection ....... [[32mCREATE VIEW[0m in 1.78s]
+[0m08:07:20  106 of 171 START sql view model elementary.dbt_artifacts_hashes ................ [RUN]
+[0m08:07:21  103 of 171 OK created sql view model elementary.alerts_dbt_tests ............... [[32mCREATE VIEW[0m in 1.63s]
+[0m08:07:21  107 of 171 SKIP test not_null_stg_workable_jobs_id ............................. [[33mSKIP[0m]
+[0m08:07:21  108 of 171 SKIP test not_null_stg_workable_jobs_job_title ...................... [[33mSKIP[0m]
+[0m08:07:21  109 of 171 SKIP test not_null_stg_workable_jobs_job_url ........................ [[33mSKIP[0m]
+[0m08:07:21  110 of 171 SKIP test unique_stg_workable_jobs_id ............................... [[33mSKIP[0m]
+[0m08:07:21  111 of 171 SKIP test unique_stg_workable_jobs_job_url .......................... [[33mSKIP[0m]
+[0m08:07:21  112 of 171 SKIP relation public.stg_ashby__job_departments ..................... [[33mSKIP[0m]
+[0m08:07:21  113 of 171 SKIP relation public.stg_ashby__job_locations ....................... [[33mSKIP[0m]
+[0m08:07:21  114 of 171 SKIP relation public.stg_ashby__jobs_outline ........................ [[33mSKIP[0m]
+[0m08:07:21  115 of 171 START sql view model public.stg_greenhouse__jobs_outline ............ [RUN]
+[0m08:07:21  104 of 171 OK created sql view model elementary.alerts_schema_changes .......... [[32mCREATE VIEW[0m in 1.66s]
+[0m08:07:21  116 of 171 START sql view model public.stg_greenhouse__job_departments ......... [RUN]
+[0m08:07:21  106 of 171 OK created sql view model elementary.dbt_artifacts_hashes ........... [[32mCREATE VIEW[0m in 1.61s]
+[0m08:07:21  117 of 171 START sql view model public.stg_lever__jobs_outline ................. [RUN]
+[0m08:07:22  105 of 171 OK created sql incremental model elementary.test_result_rows ........ [[32mINSERT 0 0[0m in 2.03s]
+[0m08:07:22  118 of 171 SKIP relation public.stg_rippling__jobs_outline ..................... [[33mSKIP[0m]
+[0m08:07:22  119 of 171 START sql view model elementary.anomaly_threshold_sensitivity ....... [RUN]
+[0m08:07:22  115 of 171 OK created sql view model public.stg_greenhouse__jobs_outline ....... [[32mCREATE VIEW[0m in 1.65s]
+[0m08:07:22  120 of 171 START sql view model elementary.alerts_dbt_models ................... [RUN]
+[0m08:07:23  116 of 171 OK created sql view model public.stg_greenhouse__job_departments .... [[32mCREATE VIEW[0m in 1.62s]
+[0m08:07:23  121 of 171 SKIP relation public.combined_job_sources ........................... [[33mSKIP[0m]
+[0m08:07:23  122 of 171 SKIP relation public.int_ashby_departments_expanded ................. [[33mSKIP[0m]
+[0m08:07:23  123 of 171 SKIP relation public.int_ashby_locations_expanded ................... [[33mSKIP[0m]
+[0m08:07:23  124 of 171 START test accepted_values_stg_greenhouse__jobs_outline_job_board__greenhouse  [RUN]
+[0m08:07:23  117 of 171 OK created sql view model public.stg_lever__jobs_outline ............ [[32mCREATE VIEW[0m in 1.57s]
+[0m08:07:23  125 of 171 START test dbt_expectations_expect_table_columns_to_match_set_stg_greenhouse__jobs_outline_id__levergreen_id__created_at_utc__updated_at_utc__created_date_utc__updated_date_utc__source__department_ids__location__office_ids__full_opening_link__opening_title__uses_existing__raw_html_file_location__run_hash__job_board__company_name  [RUN]
+[0m08:07:23  119 of 171 OK created sql view model elementary.anomaly_threshold_sensitivity .. [[32mCREATE VIEW[0m in 1.50s]
+[0m08:07:23  126 of 171 START test accepted_values_stg_greenhouse__job_departments_job_board__greenhouse  [RUN]
+[0m08:07:24  120 of 171 OK created sql view model elementary.alerts_dbt_models .............. [[32mCREATE VIEW[0m in 1.55s]
+[0m08:07:24  127 of 171 START test dbt_expectations_expect_table_columns_to_match_set_stg_greenhouse__job_departments_id__levergreen_id__created_at_utc__updated_at_utc__created_date_utc__updated_date_utc__source__company_name__department_category__department_id__department_name__uses_existing__raw_html_file_location__run_hash__job_board  [RUN]
+[0m08:07:24  124 of 171 PASS accepted_values_stg_greenhouse__jobs_outline_job_board__greenhouse  [[32mPASS[0m in 1.41s]
+[0m08:07:24  128 of 171 SKIP relation public.int_ashby_outline_finalized .................... [[33mSKIP[0m]
+[0m08:07:24  129 of 171 START test accepted_values_stg_lever__jobs_outline_job_board__lever . [RUN]
+[0m08:07:24  125 of 171 PASS dbt_expectations_expect_table_columns_to_match_set_stg_greenhouse__jobs_outline_id__levergreen_id__created_at_utc__updated_at_utc__created_date_utc__updated_date_utc__source__department_ids__location__office_ids__full_opening_link__opening_title__uses_existing__raw_html_file_location__run_hash__job_board__company_name  [[32mPASS[0m in 1.34s]
+[0m08:07:24  130 of 171 START test dbt_expectations_expect_table_columns_to_match_set_stg_lever__jobs_outline_id__levergreen_id__created_at_utc__updated_at_utc__source__department_names__location__workplace_type__full_opening_link__opening_title__company_name__uses_existing__raw_html_file_location__run_hash__created_date_utc__updated_date_utc__job_board  [RUN]
+[0m08:07:25  126 of 171 PASS accepted_values_stg_greenhouse__job_departments_job_board__greenhouse  [[32mPASS[0m in 1.77s]
+[0m08:07:25  127 of 171 PASS dbt_expectations_expect_table_columns_to_match_set_stg_greenhouse__job_departments_id__levergreen_id__created_at_utc__updated_at_utc__created_date_utc__updated_date_utc__source__company_name__department_category__department_id__department_name__uses_existing__raw_html_file_location__run_hash__job_board  [[32mPASS[0m in 1.45s]
+[0m08:07:25  131 of 171 START sql table model public.int_greenhouse_departments_expanded_with_outline  [RUN]
+[0m08:07:26  130 of 171 PASS dbt_expectations_expect_table_columns_to_match_set_stg_lever__jobs_outline_id__levergreen_id__created_at_utc__updated_at_utc__source__department_names__location__workplace_type__full_opening_link__opening_title__company_name__uses_existing__raw_html_file_location__run_hash__created_date_utc__updated_date_utc__job_board  [[32mPASS[0m in 1.44s]
+[0m08:07:26  129 of 171 PASS accepted_values_stg_lever__jobs_outline_job_board__lever ....... [[32mPASS[0m in 1.94s]
+[0m08:07:26  132 of 171 START sql table model public.int_lever_departments_expanded ......... [RUN]
+[0m08:07:29  131 of 171 OK created sql table model public.int_greenhouse_departments_expanded_with_outline  [[32mSELECT 14560[0m in 3.41s]
+[0m08:07:31  132 of 171 OK created sql table model public.int_lever_departments_expanded .... [[32mSELECT 43084[0m in 4.85s]
+[0m08:07:31  133 of 171 SKIP relation core.all_job_postings ................................. [[33mSKIP[0m]
+[0m08:07:31  134 of 171 SKIP test accepted_values_all_job_postings_job_board__greenhouse__lever__ashby__rippling  [[33mSKIP[0m]
+[0m08:07:31  135 of 171 SKIP test accepted_values_all_job_postings_opening_category__Data__Software_Engineering__Product__Sales__Finance_Accounting__Operations__Other  [[33mSKIP[0m]
+[0m08:07:31  136 of 171 SKIP test accepted_values_all_job_postings_posting_length_category__Inactive__Stale__Old__Medium__Recent__New  [[33mSKIP[0m]
+[0m08:07:31  137 of 171 SKIP test check_sneaky_returning_job ................................ [[33mSKIP[0m]
+[0m08:07:31  138 of 171 SKIP test dbt_expectations_expect_table_columns_to_match_set_all_job_postings_id__levergreen_id__created_date_utc__updated_date_utc__source__company_name__uses_existing__location__full_opening_link__opening_title__is_remote__primary_department__secondary_department__tertiary_department__quaternary_department__run_hash__job_board__is_active__earliest_opening_date__latest_opening_date__days_active__posting_length_category__opening_category  [[33mSKIP[0m]
+[0m08:07:31  139 of 171 SKIP test not_null_all_job_postings_id .............................. [[33mSKIP[0m]
+[0m08:07:31  140 of 171 SKIP test not_null_all_job_postings_levergreen_id ................... [[33mSKIP[0m]
+[0m08:07:31  141 of 171 SKIP test unique_all_job_postings_id ................................ [[33mSKIP[0m]
+[0m08:07:31  142 of 171 SKIP test unique_all_job_postings_levergreen_id ..................... [[33mSKIP[0m]
+[0m08:07:31  143 of 171 SKIP relation core.active_job_postings .............................. [[33mSKIP[0m]
+[0m08:07:31  144 of 171 SKIP test accepted_values_active_job_postings_job_board__greenhouse__lever__ashby__rippling  [[33mSKIP[0m]
+[0m08:07:31  145 of 171 SKIP test accepted_values_active_job_postings_opening_category__Data__Software_Engineering__Product__Sales__Finance_Accounting__Operations__Other  [[33mSKIP[0m]
+[0m08:07:31  146 of 171 SKIP test accepted_values_active_job_postings_posting_length_category__Inactive__Stale__Old__Medium__Recent__New  [[33mSKIP[0m]
+[0m08:07:31  147 of 171 SKIP test check_expected_careers_pages_scraped ...................... [[33mSKIP[0m]
+[0m08:07:31  148 of 171 SKIP test confirm_active_jobs_per_company_scraped ................... [[33mSKIP[0m]
+[0m08:07:31  149 of 171 SKIP test dbt_expectations_expect_table_columns_to_match_set_active_job_postings_id__levergreen_id__created_date_utc__updated_date_utc__source__company_name__uses_existing__location__full_opening_link__opening_title__is_remote__primary_department__secondary_department__tertiary_department__quaternary_department__run_hash__job_board__is_active__earliest_opening_date__latest_opening_date__days_active__posting_length_category__opening_category  [[33mSKIP[0m]
+[0m08:07:31  150 of 171 SKIP test not_null_active_job_postings_id ........................... [[33mSKIP[0m]
+[0m08:07:31  151 of 171 SKIP test not_null_active_job_postings_levergreen_id ................ [[33mSKIP[0m]
+[0m08:07:31  152 of 171 SKIP test unique_active_job_postings_id ............................. [[33mSKIP[0m]
+[0m08:07:31  153 of 171 SKIP test unique_active_job_postings_levergreen_id .................. [[33mSKIP[0m]
+[0m08:07:31  154 of 171 SKIP relation core.active_job_postings_default ...................... [[33mSKIP[0m]
+[0m08:07:31  155 of 171 SKIP relation core.active_job_postings_prospect ..................... [[33mSKIP[0m]
+[0m08:07:31  156 of 171 SKIP test accepted_values_active_job_postings_default_job_board__greenhouse__lever__ashby  [[33mSKIP[0m]
+[0m08:07:31  157 of 171 SKIP test accepted_values_active_job_postings_default_opening_category__Data__Software_Engineering__Product__Sales__Finance_Accounting__Operations__Other  [[33mSKIP[0m]
+[0m08:07:31  158 of 171 SKIP test accepted_values_active_job_postings_default_posting_length_category__Inactive__Stale__Old__Medium__Recent__New  [[33mSKIP[0m]
+[0m08:07:31  159 of 171 SKIP test accepted_values_active_job_postings_prospect_job_board__greenhouse__lever__ashby__rippling  [[33mSKIP[0m]
+[0m08:07:31  160 of 171 SKIP test accepted_values_active_job_postings_prospect_opening_category__Data__Software_Engineering__Product__Sales__Finance_Accounting__Operations__Other  [[33mSKIP[0m]
+[0m08:07:31  161 of 171 SKIP test accepted_values_active_job_postings_prospect_posting_length_category__Inactive__Stale__Old__Medium__Recent__New  [[33mSKIP[0m]
+[0m08:07:31  162 of 171 SKIP test dbt_expectations_expect_table_columns_to_match_set_active_job_postings_default_id__levergreen_id__created_date_utc__updated_date_utc__source__company_name__uses_existing__location__full_opening_link__opening_title__is_remote__primary_department__secondary_department__tertiary_department__quaternary_department__run_hash__job_board__is_active__earliest_opening_date__latest_opening_date__days_active__posting_length_category__opening_category  [[33mSKIP[0m]
+[0m08:07:31  163 of 171 SKIP test dbt_expectations_expect_table_columns_to_match_set_active_job_postings_prospect_id__levergreen_id__created_date_utc__updated_date_utc__source__company_name__uses_existing__location__full_opening_link__opening_title__is_remote__primary_department__secondary_department__tertiary_department__quaternary_department__run_hash__job_board__is_active__earliest_opening_date__latest_opening_date__days_active__posting_length_category__opening_category  [[33mSKIP[0m]
+[0m08:07:31  164 of 171 SKIP test not_null_active_job_postings_default_id ................... [[33mSKIP[0m]
+[0m08:07:31  165 of 171 SKIP test not_null_active_job_postings_default_levergreen_id ........ [[33mSKIP[0m]
+[0m08:07:31  166 of 171 SKIP test not_null_active_job_postings_prospect_id .................. [[33mSKIP[0m]
+[0m08:07:31  167 of 171 SKIP test not_null_active_job_postings_prospect_levergreen_id ....... [[33mSKIP[0m]
+[0m08:07:31  168 of 171 SKIP test unique_active_job_postings_default_id ..................... [[33mSKIP[0m]
+[0m08:07:31  169 of 171 SKIP test unique_active_job_postings_default_levergreen_id .......... [[33mSKIP[0m]
+[0m08:07:31  170 of 171 SKIP test unique_active_job_postings_prospect_id .................... [[33mSKIP[0m]
+[0m08:07:31  171 of 171 SKIP test unique_active_job_postings_prospect_levergreen_id ......... [[33mSKIP[0m]
+[0m08:07:32  
+[0m08:07:32  Running 1 on-run-end hook
+[0m08:07:40  1 of 1 START hook: elementary.on-run-end.0 ..................................... [RUN]
+[0m08:07:40  1 of 1 OK hook: elementary.on-run-end.0 ........................................ [[32mOK[0m in 0.00s]
+[0m08:07:40  
+[0m08:07:40  
+[0m08:07:40  Finished running 16 incremental models, 10 table models, 22 view models, 123 data tests, 2 project hooks in 0 hours 1 minutes and 5.09 seconds (65.09s).
+[0m08:07:40  
+[0m08:07:40  [31mCompleted with 9 errors and 2 warnings:[0m
+[0m08:07:40  
+[0m08:07:40    Database Error in model stg_workable_jobs (models/staging/stg_workable_jobs.sql)
+  cross-database references are not implemented: "your_database.public.workable_jobs"
+  LINE 9:     from "your_database"."public"."workable_jobs"
+                   ^
+  compiled code at target/run/levergreen_dbt/models/staging/stg_workable_jobs.sql
+[0m08:07:40  
+[0m08:07:40  [31mFailure in test dbt_expectations_source_expect_table_columns_to_match_set_levergreen_job_board_urls_id__company_url__is_enabled__is_prospect__is_web_scraped__ats__company (models/staging/levergreen/_levergreen__sources.yml)[0m
+[0m08:07:40    Got 2 results, configured to fail if != 0
+[0m08:07:40  
+[0m08:07:40    compiled code at target/compiled/levergreen_dbt/models/staging/levergreen/_levergreen__sources.yml/dbt_expectations_source_expect_e20d05a7198ee9a0ca1390263d9da25b.sql
+[0m08:07:40  
+[0m08:07:40  [31mFailure in test dbt_expectations_source_expect_table_columns_to_match_set_rippling_rippling_jobs_outline_id__job_id__created_at__title__url__location__board_token__department__run_hash__api_endpoint (models/staging/rippling/_rippling__sources.yml)[0m
+[0m08:07:40    Got 1 result, configured to fail if != 0
+[0m08:07:40  
+[0m08:07:40    compiled code at target/compiled/levergreen_dbt/models/staging/rippling/_rippling__sources.yml/dbt_expectations_source_expect_fe65d6ff9a8f8e2096636d19ee6d1fba.sql
+[0m08:07:40  
+[0m08:07:40  [31mFailure in test source_not_null_ashby_ashby_job_departments_created_at (models/staging/ashby/_ashby__sources.yml)[0m
+[0m08:07:40    Got 6 results, configured to fail if != 0
+[0m08:07:40  
+[0m08:07:40    compiled code at target/compiled/levergreen_dbt/models/staging/ashby/_ashby__sources.yml/source_not_null_ashby_ashby_job_departments_created_at.sql
+[0m08:07:40  
+[0m08:07:40    Database Error in test source_not_null_ashby_ashby_job_departments_source (models/staging/ashby/_ashby__sources.yml)
+  column "source" does not exist
+  LINE 16: select source
+                  ^
+  compiled code at target/run/levergreen_dbt/models/staging/ashby/_ashby__sources.yml/source_not_null_ashby_ashby_job_departments_source.sql
+[0m08:07:40  
+[0m08:07:40  [31mFailure in test source_not_null_ashby_ashby_job_locations_created_at (models/staging/ashby/_ashby__sources.yml)[0m
+[0m08:07:40    Got 4 results, configured to fail if != 0
+[0m08:07:40  
+[0m08:07:40    compiled code at target/compiled/levergreen_dbt/models/staging/ashby/_ashby__sources.yml/source_not_null_ashby_ashby_job_locations_created_at.sql
+[0m08:07:40  
+[0m08:07:40    Database Error in test source_not_null_ashby_ashby_job_locations_source (models/staging/ashby/_ashby__sources.yml)
+  column "source" does not exist
+  LINE 16: select source
+                  ^
+  compiled code at target/run/levergreen_dbt/models/staging/ashby/_ashby__sources.yml/source_not_null_ashby_ashby_job_locations_source.sql
+[0m08:07:40  
+[0m08:07:40    Database Error in test source_not_null_ashby_ashby_jobs_outline_ashby_job_board_source (models/staging/ashby/_ashby__sources.yml)
+  column "ashby_job_board_source" does not exist
+  LINE 16: select ashby_job_board_source
+                  ^
+  compiled code at target/run/levergreen_dbt/models/staging/ashby/_ashby__sources.yml/source_not_null_ashby_ashby_jobs_outline_ashby_job_board_source.sql
+[0m08:07:40  
+[0m08:07:40  [31mFailure in test source_not_null_ashby_ashby_jobs_outline_created_at (models/staging/ashby/_ashby__sources.yml)[0m
+[0m08:07:40    Got 5 results, configured to fail if != 0
+[0m08:07:40  
+[0m08:07:40    compiled code at target/compiled/levergreen_dbt/models/staging/ashby/_ashby__sources.yml/source_not_null_ashby_ashby_jobs_outline_created_at.sql
+[0m08:07:40  
+[0m08:07:40  [33mWarning in test source_accepted_values_greenhouse_greenhouse_job_departments_department_category__level_0__level_1__level_2__level_3__level_4__level_5 (models/staging/greenhouse/_greenhouse__sources.yml)[0m
+[0m08:07:40  Got 33 results, configured to warn if != 0
+[0m08:07:40  
+[0m08:07:40    compiled code at target/compiled/levergreen_dbt/models/staging/greenhouse/_greenhouse__sources.yml/source_accepted_values_greenho_c1efa92ea811064d90f3fb6de8813db5.sql
+[0m08:07:40  
+[0m08:07:40  [33mWarning in test source_not_null_lever_lever_jobs_outline_location (models/staging/lever/_lever__sources.yml)[0m
+[0m08:07:40  Got 8 results, configured to warn if != 0
+[0m08:07:40  
+[0m08:07:40    compiled code at target/compiled/levergreen_dbt/models/staging/lever/_lever__sources.yml/source_not_null_lever_lever_jobs_outline_location.sql
+[0m08:07:40  
+[0m08:07:40  Done. PASS=108 WARN=2 ERROR=9 SKIP=52 TOTAL=171
