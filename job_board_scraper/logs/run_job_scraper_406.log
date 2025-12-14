@@ -1,0 +1,28 @@
+2025-12-14 07:11:04 [INFO] logger: Processing ATS: greenhouse
+2025-12-14 07:11:05 [INFO] postgres_wrapper: PostgreSQL connection pool created successfully for process 2812
+2025-12-14 07:11:05 [INFO] logger: Found 0 URLs for ATS: greenhouse
+2025-12-14 07:11:05 [INFO] logger: Completed processing ATS: greenhouse
+2025-12-14 07:11:05 [INFO] logger: Processing ATS: lever
+2025-12-14 07:11:05 [INFO] logger: Found 0 URLs for ATS: lever
+2025-12-14 07:11:06 [INFO] logger: Completed processing ATS: lever
+2025-12-14 07:11:06 [INFO] logger: Processing ATS: ashbyhq
+2025-12-14 07:11:06 [INFO] logger: Found 0 URLs for ATS: ashbyhq
+2025-12-14 07:11:06 [INFO] logger: Completed processing ATS: ashbyhq
+2025-12-14 07:11:06 [INFO] logger: Processing ATS: recruitee
+2025-12-14 07:11:06 [INFO] logger: Found 0 URLs for ATS: recruitee
+2025-12-14 07:11:06 [INFO] logger: Completed processing ATS: recruitee
+2025-12-14 07:11:06 [INFO] logger: Processing ATS: teamtailor
+2025-12-14 07:11:07 [INFO] logger: Found 0 URLs for ATS: teamtailor
+2025-12-14 07:11:07 [INFO] logger: Completed processing ATS: teamtailor
+2025-12-14 07:11:07 [INFO] logger: Processing ATS: smartrecruiters
+2025-12-14 07:11:07 [INFO] logger: Found 0 URLs for ATS: smartrecruiters
+2025-12-14 07:11:07 [INFO] logger: Completed processing ATS: smartrecruiters
+2025-12-14 07:11:07 [INFO] logger: Processing ATS: jobvite
+2025-12-14 07:11:07 [INFO] logger: Found 0 URLs for ATS: jobvite
+2025-12-14 07:11:08 [INFO] logger: Completed processing ATS: jobvite
+2025-12-14 07:11:08 [INFO] logger: Processing ATS: workable
+2025-12-14 07:11:08 [INFO] logger: Found 0 URLs for ATS: workable
+2025-12-14 07:11:08 [INFO] logger: Completed processing ATS: workable
+2025-12-14 07:11:08 [INFO] logger: Processing ATS: rippling
+2025-12-14 07:11:08 [INFO] logger: Found 0 URLs for ATS: rippling
+2025-12-14 07:11:08 [INFO] logger: Completed processing ATS: rippling
