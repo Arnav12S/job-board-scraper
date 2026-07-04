@@ -1,0 +1,16 @@
+[0m10:00:43  Running with dbt=1.8.9
+[0m10:00:43  Registered adapter: postgres=1.8.2
+[0m10:00:43  Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m10:00:47  [[33mWARNING[0m]: Deprecated functionality
+The `tests` config has been renamed to `data_tests`. Please see
+https://docs.getdbt.com/docs/build/data-tests#new-data_tests-syntax for more
+information.
+[0m10:00:48  Found 48 models, 123 data tests, 2 operations, 12 sources, 1618 macros
+[0m10:00:48  
+[0m10:00:52  
+[0m10:00:52  Finished running  in 0 hours 0 minutes and 3.47 seconds (3.47s).
+[0m10:00:52  Encountered an error:
+Database Error
+  connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: FATAL:  (ENOTFOUND) tenant/user postgres.fdtkrxqcyhojdiqqnaqr not found
+  connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: FATAL:  (ENOTFOUND) tenant/user postgres.fdtkrxqcyhojdiqqnaqr not found
+  
