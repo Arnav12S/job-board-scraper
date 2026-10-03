@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/runner/work/job-board-scraper/job-board-scraper/job_board_scraper/run_job_scraper.py", line 2, in <module>
+    import scrapy
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/scrapy/__init__.py", line 10, in <module>
+    from scrapy.http import FormRequest, Request
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/scrapy/http/__init__.py", line 9, in <module>
+    from scrapy.http.request import Request
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/scrapy/http/request/__init__.py", line 29, in <module>
+    from scrapy.utils.url import escape_ajax
+  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/scrapy/utils/url.py", line 18, in <module>
+    from w3lib.url import _safe_chars, _unquotepath  # noqa: F401
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ImportError: cannot import name '_safe_chars' from 'w3lib.url' (/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/w3lib/url.py)
